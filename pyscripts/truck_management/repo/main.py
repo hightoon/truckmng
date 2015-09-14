@@ -107,9 +107,14 @@ def page_index():
   act_user = get_act_user()
   if act_user is None:
     redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
   return template('./view/bsfiles/view/dashboard.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user, query_results=None)
+                  user=act_user, query_results=None,
+                  privs=privs)
 
 @route('/user_roles')
 def role_mng():
@@ -202,10 +207,15 @@ def account_mngn():
   act_user = get_act_user()
   if act_user is None:
     redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
   return template('./view/bsfiles/view/usr_mng.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user,
-                  usrs=UserDb.fetch_users())
+                  usrs=UserDb.fetch_users(),
+                  privs=privs)
 
 @route('/del_user/<usrname>', method='POST')
 def del_user(usrname):
@@ -315,7 +325,7 @@ def update_passwd():
   if passwd != cnfm_passwd:
     return '新密码两次输入不一致，请返回重试!'
   UserDb.change_passwd(act_user.usrname, passwd)
-  redirect('/account_mngn')
+  redirect('/index')
 
 @route('/static/<filename:path>')
 def send_static(filename):

@@ -1,4 +1,4 @@
-# -*- coding=utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import sqlite3
 from datetime import datetime
@@ -184,11 +184,11 @@ def add_role(role):
 
 def add_root():
   root = Role('超级管理员',
-              ['超限处理', '处理审核', '超限处理登记', '黑名单增删', '黑名单审核', '用户增删'])
+              ['超限处理', '处理审核', '超限处理登记', '登记审核', '黑名单增删', '黑名单审核', '用户增删'])
   root.put()
 
 def add_default_roles():
-  r = Role('管理员', ['处理审核', '黑名单审核'])
+  r = Role('管理员', ['处理审核', '登记审核', '黑名单审核'])
   r.put()
   r = Role('操作员', ['超限处理', '超限处理登记', '黑名单增删'])
   r.put()

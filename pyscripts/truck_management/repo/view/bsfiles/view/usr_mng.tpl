@@ -54,9 +54,9 @@
                 	<td>
                 		<select class="form-control input-sm" name="role">
                 			<option value="系统管理员">超级管理员</option>
-                			<option value="系统管理员">管理员</option>
-                			<option value="系统管理员">操作员</option>
-                			<option value="系统管理员">来宾</option>
+                			<option value="管理员">管理员</option>
+                			<option value="操作员">操作员</option>
+                			<option value="来宾">来宾</option>
                 		</select>
                 	</td>
                 	<td>
