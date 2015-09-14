@@ -91,7 +91,9 @@ def exec_sql_file(cur, f):
 
 
 if __name__ == '__main__':
-	conn = pymssql.connect(r'10.140.163.132\sqlexpress', r'.\quentin', r'111111', r'tempdb', charset='UTF-8')
+	#conn = pymssql.connect(r'10.140.163.132\sqlexpress', r'.\quentin', r'111111', r'tempdb', charset='UTF-8')
+	conn = pymssql.connect(r'192.168.0.4\sqlexpress', r'.\haitong', r'111111', r'tempdb')
+	conn.autocommit(True)
 	cur = conn.cursor()
 	#exec_sql_file(cur, r'../sifang/sifang.sql')
 	for s in init_db_cmds:
@@ -99,9 +101,10 @@ if __name__ == '__main__':
 	for s in setup_db_cmds:
 		cur.execute(s)
 	cur.execute('INSERT INTO LimitW VALUES (%d, %d)', (1,3))
-	conn.commit()
-	q = cur.execute('SELECT * FROM smArea')
-	print q
+	cur.execute('INSERT INTO smArea VALUES (%d, %s, %s, %d)', (2, '绍兴', '柯桥', 3))
+	cur.execute('SELECT * FROM smArea')
+	for r in cur.fetchall():
+		print r[2], r[3], '绍兴'
 	cur.close()
 	conn.close()
 
