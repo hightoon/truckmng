@@ -17,7 +17,9 @@ from multiprocessing import Process
 from bottle import route, request, redirect, template,static_file, run, app, hook
 from ftplib import FTP
 from beaker.middleware import SessionMiddleware
+
 import UserDb
+import db_man
 
 
 session_opts = {
@@ -115,6 +117,99 @@ def page_index():
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, query_results=None,
                   privs=privs)
+
+@route('/query')
+def query():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  return template('./view/bsfiles/view/vehicle_query.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, results=None)
+
+@route('/query', method="POST")
+def send_query_results():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  overweight = request.forms.get('overweight')
+  proceeded  = request.forms.get('proceeded')
+  print overweight, proceeded
+  #results = db_man.fetch_recs(overweight, proceeded)
+  #details = db_man.fetch_recs(overweight, proceeded, brf=False)
+  results = [UserDb.Record.TAB_BRF_HDR, (1, 20001, '2015-09-20 12:00:00.123445', '浙A56789')]
+  details = [UserDb.Record.TAB_HDR, 
+            (1, 20001, 2, '2015-09-20 12:00:00.123445', '浙A56789', '正常', 2, 40, 2000.23, 1, 30000, 10.1, 'c:\\a.jpg', 'c:\\b.jpg')]
+  return template('./view/bsfiles/view/vehicle_query.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user, privs=privs,
+                  results=results,
+                  details=details)
+
+@route('/proceed')
+def proceed():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/rec_proceed.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, results=None)
+
+@route('/proceed', method='POST')
+def proceed():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  fields = ['']
+
+@route('/proceed_query', method='POST')
+def proceed_query():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  fields = ['proceeded', 'siteid', 'wheels']
+  for f in fields:
+    try:
+      print int(request.forms.get(f))
+    except:
+      print f
+  #results = db_man.fetch_recs(overweight, proceeded)
+  #details = db_man.fetch_recs(overweight, proceeded, brf=False)
+  results = [UserDb.Record.TAB_BRF_HDR, (1, 20001, '2015-09-20 12:00:00.123445', '浙A56789')]
+  details = [UserDb.Record.TAB_HDR, 
+            (1, 20001, 2, '2015-09-20 12:00:00.123445', '浙A56789', '正常', 2, 40, 2000.23, 1, 30000, 10.1, 'c:\\a.jpg', 'c:\\b.jpg')]
+  return template('./view/bsfiles/view/rec_proceed.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user, privs=privs,
+                  results=results,
+                  details=details)
+
 
 @route('/user_roles')
 def role_mng():

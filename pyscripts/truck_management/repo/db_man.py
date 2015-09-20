@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pymssql
+import UserDb
 
 """
     odbc db manipulation
@@ -33,8 +34,8 @@ setup_db_cmds = [
 	""" CREATE TABLE [dbo].[smArea] (
     	[ID] [int] IDENTITY (1, 1) NOT NULL ,
     	[AreaID] [int] NULL ,
-    	[AreaName] [varchar] (50) COLLATE Chinese_PRC_CI_AS NULL ,
-    	[AreaInfo] [varchar] (50) COLLATE Chinese_PRC_CI_AS NULL ,
+    	[AreaName] [nvarchar] (50) COLLATE Chinese_PRC_CI_AS NULL ,
+    	[AreaInfo] [nvarchar] (50) COLLATE Chinese_PRC_CI_AS NULL ,
     	[SiteID] [int] NULL
 		) ON [PRIMARY]
 	""",
@@ -76,6 +77,7 @@ setup_db_cmds = [
 	"""
 ]
 
+
 def exec_sql_file(cur, f):
 	sqlstr = ''
 	with open(f, 'r') as fd:
@@ -90,21 +92,134 @@ def exec_sql_file(cur, f):
 				sqlstr += line
 
 
-if __name__ == '__main__':
-	#conn = pymssql.connect(r'10.140.163.132\sqlexpress', r'.\quentin', r'111111', r'tempdb', charset='UTF-8')
-	conn = pymssql.connect(r'192.168.0.4\sqlexpress', r'.\haitong', r'111111', r'tempdb')
+def connectdb():
+	conn = pymssql.connect(r'192.168.0.6\sqlexpress', r'.\haitong', r'111111', r'mytestdb')
+	#conn = pymssql.connect(r'10.140.163.132\sqlexpress', r'.\quentin', r'111111', r'ssss')
 	conn.autocommit(True)
+	return conn
+
+def drop_existing_tables():
+	conn = connectdb()
 	cur = conn.cursor()
-	#exec_sql_file(cur, r'../sifang/sifang.sql')
 	for s in init_db_cmds:
 		cur.execute(s)
+	conn.close()
+
+def create_tables():
+	conn = connectdb()
+	cur = conn.cursor()
 	for s in setup_db_cmds:
 		cur.execute(s)
-	cur.execute('INSERT INTO LimitW VALUES (%d, %d)', (1,3))
-	cur.execute('INSERT INTO smArea VALUES (%d, %s, %s, %d)', (2, '绍兴', '柯桥', 3))
-	cur.execute('SELECT * FROM smArea')
+	conn.close()
+
+def fetch_all_veh_recs():
+	conn = connectdb()
+	cur = conn.cursor(as_dict=True)
+	cur.execute('SELECT * FROM smHighWayDate')
+	results = [UserDb.Record.TAB_HDR]
+	rows = cur.fetchall()
+	if rows:
+		for row in rows:
+			results.append((row['Xuhao'], row['RecordID'], row['SiteID'], row['smTime'], row['VehicheCard'],
+							row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
+							row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'],
+							row['smPlatePath'], row['smImgPath']))
+	conn.close()
+	return results
+
+def fetch_all_veh_recs_brf():
+	conn = connectdb()
+	cur = conn.cursor(as_dict=True)
+	cur.execute('SELECT * FROM smHighWayDate')
+	results = [UserDb.Record.TAB_BRF_HDR]
+	rows = cur.fetchall()
+	if rows:
+		for row in rows:
+			results.append((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']))
+	conn.close()
+	return results
+
+def fetch_all_bad():
+	conn = connectdb()
+	cur = conn.cursor(as_dict=True)
+	cur.execute('SELECT * FROM smHighWayDate WHERE smState=%s', u'超限')
+	results = [UserDb.Record.TAB_HDR]
+	rows = cur.fetchall()
+	if rows:
+		for row in rows:
+			results.append((row['Xuhao'], row['RecordID'], row['SiteID'], row['smTime'], row['VehicheCard'],
+							row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
+							row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'],
+							row['smPlatePath'], row['smImgPath']))
+	conn.close()
+	return results
+
+def fetch_all_bad_brf():
+	conn = connectdb()
+	cur = conn.cursor(as_dict=True)
+	cur.execute('SELECT * FROM smHighWayDate WHERE smState=%s', u'超限')
+	results = [UserDb.Record.TAB_BRF_HDR]
+	rows = cur.fetchall()
+	if rows:
+		for row in rows:
+			results.append((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']))
+	conn.close()
+	return results
+
+def fetch_all_good():
+	conn = connectdb()
+	cur = conn.cursor(as_dict=True)
+	cur.execute('SELECT * FROM smHighWayDate WHERE smState=%s', u'正常')
+	results = [UserDb.Record.TAB_HDR]
+	rows = cur.fetchall()
+	if rows:
+		for row in rows:
+			results.append((row['Xuhao'], row['RecordID'], row['SiteID'], row['smTime'], row['VehicheCard'],
+							row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
+							row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'],
+							row['smPlatePath'], row['smImgPath']))
+	conn.close()
+	return results
+
+def fetch_all_good_brf():
+	conn = connectdb()
+	cur = conn.cursor(as_dict=True)
+	cur.execute('SELECT * FROM smHighWayDate WHERE smState=%s', u'正常')
+	results = [UserDb.Record.TAB_BRF_HDR]
+	rows = cur.fetchall()
+	if rows:
+		for row in rows:
+			results.append((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']))
+	conn.close()
+	return results
+
+def fetch_recs(ow='', proc='', brf=True):
+	if ow == '':
+		if brf:
+			return fetch_all_veh_recs_brf()
+		else:
+			return fetch_all_veh_recs()
+	elif ow == 'yes':
+		if brf:
+			return fetch_all_bad_brf()
+		else:
+			return fetch_all_bad()
+	elif ow == 'no':
+		if brf:
+			return fetch_all_good_brf()
+		else:
+			return fetch_all_good()
+
+def test_main():
+	conn = connectdb()
+	cur = conn.cursor()
+	#exec_sql_file(cur, r'../sifang/sifang.sql')
+	cur.execute('SELECT * FROM smHighWayDate')
 	for r in cur.fetchall():
-		print r[2], r[3], '绍兴'
+		print r[0], r[1]
 	cur.close()
 	conn.close()
+
+if __name__ == '__main__':
+	test_main()	
 

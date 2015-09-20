@@ -239,3 +239,34 @@ def del_role(rn):
   conn.commit()
   cur.close()
   conn.close()
+
+
+class Record(object):
+  TAB_HDR = ('序号', '纪录编号', '站点编号', '时间', '车牌号', '状态', '轴数', 
+            '车速', '车重', '车道', '限载', '载重比', '车头照片', '车尾照片')
+  TAB_BRF_HDR = ('序号', '纪录编号', '时间', '车牌号')
+
+  def __init__(self, seq, recid, siteid, ts, plate, state, wheels, speed, weight, 
+               roadnum, wlimit, wlpercent, frntpic, bckpic):
+    self.seq = seq
+    self.recid = recid
+    self.siteid = siteid
+    self.ts = ts
+    self.plate = plate
+    self.state = state
+    self.wheels = wheels
+    self.speed = speed
+    self.weight = weight
+    self.roadnum = roadnum
+    self.wlimit = wlimit
+    self.wlpercent = wlpercent
+    self.frntpic = frntpic
+    self.bckpic = bckpic
+
+
+  def put():
+    pass
+
+
+class BlackList:
+  pass
