@@ -47,8 +47,8 @@
                 </tr>
                 <tr>
                 	<form action="/update_user" method="POST">
-                	<td><input type="text" class="form-control input-sm" name="usrname"></td>
-                	<td><input type="text" class="form-control input-sm" name="passwd"></td>
+                	<td><input type="text" class="form-control input-sm" name="usrname" required></td>
+                	<td><input type="text" class="form-control input-sm" name="passwd" required></td>
                 	<td><input type="text" class="form-control input-sm" name="nickname"></td>
                 	<td><input type="text" class="form-control input-sm" name="desc"></td>
                 	<td>

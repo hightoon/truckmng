@@ -18,26 +18,27 @@
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <!--img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail"-->
-              <h4>本月超限违章</h4>
+              <h4>本周超限违章</h4>
               <button class="btn btn-primary" type="button">
                 违章个数 <span class="badge">0</span>
               </button>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <!--img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail"-->
-              <h4>今年超限违章</h4>
+              <h4>本月超限违章</h4>
               <button class="btn btn-primary" type="button">
                 违章个数 <span class="badge">0</span>
               </button>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <!--img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail"-->
-              <h4>待处理数据</h4>
-              <span class="text-muted">Something else</span>
+              <h4>黑名单</h4>
+              <button class="btn btn-primary" type="button">
+                黑名单个数 <span class="badge">0</span>
+              </button>
             </div>
           </div>
 
-          <h3 class="sub-header">数据查询结果</h3>
           %if query_results:
             %include (query_results)
           %end

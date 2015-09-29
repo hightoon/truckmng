@@ -12,12 +12,12 @@
 	    </thead>
 	    <tbody>
 	      	<tr>
-	      	  %for col in detail:
+	      	  %for col in detail[:-3]:
 	      	    <td>{{col}}</td>
 	      	  %end
 	      	</tr>
 	    </tbody>
-	   </table>
+	  </table>
 	    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 		  <!-- Indicators -->
 		  <ol class="carousel-indicators">
@@ -52,6 +52,7 @@
 		    <span class="sr-only">Next</span>
 		  </a>
 		</div>
+		<a class="link" href="javascript:window.print();">打印</a>
     </div>
   </div>
 </div>

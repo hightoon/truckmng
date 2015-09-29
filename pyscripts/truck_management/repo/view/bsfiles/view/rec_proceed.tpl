@@ -7,32 +7,51 @@
       	%include ('./view/bsfiles/view/nav_sidebar.tpl')
       	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
       	  <h3 class="sub-header">超限处理</h3>
-      	  <table class="table table-striped">
+      	  <table class="table table-responsive">
       	  	<tbody>
 	      	  <form action="/proceed_query" method="POST">
 	      	  	<tr>
 	      	  	  <td>
 		      	  	  <label class="col-sm-4 control-label">开始时间</label>
-		      	  	  <div class="col-sm-4">
-		        	  	...
+		      	  	  <div class="col-sm-6">
+		        	  	<input type="date" class="form-control input-sm" id="startdate" name="startdate" 
+		        	  	placeholder="2015-01-30"/>
 		        	  </div>
+		          </td>
+		          <td>
+		      	  	  <label class="col-sm-4 control-label">结束时间</label>
+		      	  	  <div class="col-sm-6">
+		        	  	<input type="date" class="form-control input-sm" id="enddate" name="enddate" 
+		        	  	placeholder="2015-01-30"/>
+		        	  </div>
+		          </td>
+		          <td>
+		          	<label class="col-sm-4 control-label">违章状态</label>
+		        	<div class="col-sm-6">
+		        	  <select class="form-control input-sm" name="smState">
+	        			<option value="正常">正常</option>
+	        			<option value="超限" selected>超限</option>
+	        			<option value="">全部</option>
+		        	  </select>
+		        	</div>
 		          </td>
 		        </tr>
 		        <tr>
 		          <td>
 		        	  <label class="col-sm-4 control-label">处理状态</label>
-		        	  <div class="col-sm-4">
-		        	  <select class="form-control input-sm" name="proceeded" id="proceeded">
-	        			<option value="yes">已处理</option>
-	        			<option value="no">未处理</option>
-	        			<option value="" selected>全部</option>
+		        	  <div class="col-sm-6">
+		        	  <select class="form-control input-sm" name="ReadFlag" id="ReadFlag">
+	        			<option value="None" selected>未处理</option>
+	        			<option value="1">待审核</option>
+	        			<option value="2">已审核</option>
+	        			<option value="">全部</option>
 		        	  </select>
 		        	  </div>
 	        	  </td>
 	        	  <td>
 		        	  <label class="col-sm-4 control-label">站点编号</label>
-		        	  <div class="col-sm-4">
-		        	  <select class="form-control input-sm" name="siteid" id="siteid">
+		        	  <div class="col-sm-6">
+		        	  <select class="form-control input-sm" name="SiteID" id="siteid">
 		        	  	%for i in xrange(1, 9):
 	        			<option value={{i}}>{{i}}</option>
 	        			%end
@@ -42,8 +61,8 @@
 	        	  </td>
 	        	  <td>
 		        	  <label class="col-sm-4 control-label">车轴数</label>
-		        	  <div class="col-sm-4">
-		        	  <select class="form-control input-sm" name="wheels" id="wheels">
+		        	  <div class="col-sm-6">
+		        	  <select class="form-control input-sm" name="smWheelCount" id="wheels">
 		        	  	%for i in xrange(2, 7):
 	        			<option value="{{i}}">{{i}}</option>
 	        			%end
@@ -51,6 +70,26 @@
 		        	  </select>
 		        	  </div>
 	        	  </td>
+	        	</tr>
+	        	<tr>
+	        		<td>
+		        	  <label class="col-sm-4 control-label">车牌号</label>
+		        	  <div class="col-sm-6">
+		        	  	<input type="text" class="form-control input-sm" name="VehicheCard"/>
+		        	  </div>
+	        	  	</td>
+	        	  	<td>
+		        	  <label class="col-sm-4 control-label">超限率</label>
+		        	  <div class="col-sm-6">
+		        	  	<input type="text" class="form-control input-sm" name="smLimitWeightPercent"/>
+		        	  </div>
+	        	  	</td>
+	        	  	<td>
+		        	  <label class="col-sm-4 control-label">车重</label>
+		        	  <div class="col-sm-6">
+		        	  	<input type="text" class="form-control input-sm" name="smTotalWeight"/>
+		        	  </div>
+	        	  	</td>
 	        	</tr>
 	        	<tr>
 	        	  <td>
@@ -81,10 +120,15 @@
 	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#rec-modula">
 	          	  		查看详情
 	          	  	</button>
-	          	  	<button type="button" class="btn btn-sm btn-primary" formaction="/proceed" formmethod="post" 
-	          	  			name="proceed" value="go">
-	          	  		申请处理
-	          	  	</button>
+	          	  	%if details[results.index(res)][-1] is None:
+	          	  		<button class="btn btn-sm btn-primary" 
+	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[0]}}';">
+	          	  			申请处理
+	          	  		</button>
+	          	  	%else:
+	          	  		<button>处理中</button>
+	          	  	%end
+	          	  	
 	          	  	%include ('./view/bsfiles/view/query_modula.tpl', detail=details[results.index(res)])
 	          	  </td>
 	          	  </tr>
@@ -101,5 +145,14 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/static/view/bsfiles/js/jquery.min.js"></script>
     <script src="/static/view/bsfiles/js/bootstrap.min.js"></script>
+    <script src="/static/view/bsfiles/js/datetator-master/fm.datetator.jquery.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        var $inputDatetator1 = $('#startdate');
+        var $inputDatetator2 = $('#enddate');
+        $inputDatetator1.datetator();
+        $inputDatetator2.datetator();
+      });
+    </script>
 
 %include ('./view/bsfiles/view/html_footer.tpl')

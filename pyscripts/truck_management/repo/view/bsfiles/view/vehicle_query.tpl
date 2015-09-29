@@ -14,20 +14,23 @@
 	      	  	  <td>
 		      	  	  <label class="col-sm-3 control-label">超限状态</label>
 		      	  	  <div class="col-sm-3">
-		        	  <select class="form-control input-sm" name="overweight" id="overweight">
-	        			<option value="yes">超限</option>
-	        			<option value="no">正常</option>
-	        			<option value="">全部</option>
+		        	  <select class="form-control input-sm" name="smState">
+	        			<option value="超限">超限</option>
+	        			<option value="正常">正常</option>
+	        			<option value="" selected>全部</option>
 		        	  </select>
 		        	  </div>
 		          </td>
 		          <td>
 		        	  <label class="col-sm-3 control-label">处理状态</label>
 		        	  <div class="col-sm-3">
-		        	  <select class="form-control input-sm" name="proceeded" id="proceeded">
-	        			<option value="yes">已处理</option>
-	        			<option value="no">未处理</option>
-	        			<option value="">全部</option>
+		        	  <select class="form-control input-sm" name="ReadFlag">
+		        	  	<opton value="None">未处理</option>
+	        			<option value="1">已申请处理</option>
+	        			<option value="2">处理申请已审核</option>
+	        			<option value="3">处理已登记</option>
+	        			<option value="4">处理登记已审核</option>
+	        			<option value="" selected>全部</option>
 		        	  </select>
 		        	  </div>
 	        	  </td>
