@@ -15,7 +15,7 @@
                   <label class="col-sm-3 control-label">站点编号</label>
                   <div class="col-sm-4">
                     <select class="form-control select-sm" name="area" id="area">
-                      <option value="是">超限</option>
+                      <option value="是" selected>超限</option>
                       <option value="否">未超限</option>
                       <option value="">全部</option>
                     </select>
