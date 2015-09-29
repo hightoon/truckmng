@@ -40,18 +40,23 @@ def get_act_user():
     return None
 
 def cons_query_where_clause(query_mapping):
-  conds = ['=:'.join([col, col]) for col in query_mapping.keys()]
-  cond_str = ' and '.join(conds)
-  return cond_str
+  #conds = ['=:'.join([col, col]) for col in query_mapping.keys()]
+  readflag_str = ''
+  if query_mapping.has_key('ReadFlag=%d') and query_mapping['ReadFlag=%d'] is None:
+    readflag_str += ' ReadFlag is NULL '
+    query_mapping.pop('ReadFlag=%d')
+  cond_str = ' and '.join(query_mapping.keys())
+  if cond_str and readflag_str: readflag_str += ' and '
+  return readflag_str + cond_str, tuple(query_mapping.values())
 
-def cons_query_interval(start, end):
+def cons_query_interval(dates):
   timefmt = '%Y-%m-%d'
   try:
-    [datetime.strptime(t, timefmt) for t in (start, end)]
-  except ValueError:
+    [datetime.strptime(t, timefmt) for t in dates]
+  except:
     return None
   else:
-    return start + ' 00:00:00', end + ' 23:59:59'
+    return dates[0] + ' 00:00:00', dates[1] + ' 23:59:59'
 
 def validate_from_db(usr, passwd):
   user = UserDb.get(usr)
@@ -115,7 +120,8 @@ def page_index():
     redirect('/login')
   return template('./view/bsfiles/view/dashboard.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user, query_results=None,
+                  user=act_user, query_results='./view/bsfiles/view/query_rslts.tpl',
+                  results=db_man.fetch_all_bad_brf(30),
                   privs=privs)
 
 @route('/query')
@@ -142,14 +148,21 @@ def send_query_results():
   except:
     redirect('/login')
 
-  overweight = request.forms.get('overweight')
-  proceeded  = request.forms.get('proceeded')
-  print overweight, proceeded
-  #results = db_man.fetch_recs(overweight, proceeded)
-  #details = db_man.fetch_recs(overweight, proceeded, brf=False)
-  results = [UserDb.Record.TAB_BRF_HDR, (1, 20001, '2015-09-20 12:00:00.123445', '浙A56789')]
-  details = [UserDb.Record.TAB_HDR, 
-            (1, 20001, 2, '2015-09-20 12:00:00.123445', '浙A56789', '正常', 2, 40, 2000.23, 1, 30000, 10.1, 'c:\\a.jpg', 'c:\\b.jpg')]
+  fields = ('ReadFlag=%d', 'smState=%s')
+  values = {}
+  for f in fields:
+    value = request.forms.get(f.split('=')[0])
+    try:
+      if '.' in value: values[f] = float(value)
+      else: values[f] = int(value)
+    except:
+      if value:
+        if value == 'None': values[f] = None
+        else: values[f] = value.decode('utf-8')
+  cond = cons_query_where_clause(values)
+  interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
+  results = db_man.fetch_cond_recs(cond, interval)
+  details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/vehicle_query.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
@@ -171,8 +184,8 @@ def proceed():
                   user=act_user,
                   privs=privs, results=None)
 
-@route('/proceed', method='POST')
-def proceed():
+@route('/proceed/<seq>')
+def proceed(seq):
   act_user = get_act_user()
   if act_user is None:
     redirect('/')
@@ -180,8 +193,11 @@ def proceed():
     privs = UserDb.get_privilege(UserDb.get(act_user).role)
   except:
     redirect('/login')
-
-  fields = ['']
+  try:
+    db_man.update_read_flag(int(seq), UserDb.ProceedState.APPROVING)
+  except:
+    return '更新失败！纪录不存在！%s'%(seq,)
+  redirect('/proceed')
 
 @route('/proceed_query', method='POST')
 def proceed_query():
@@ -193,23 +209,104 @@ def proceed_query():
   except:
     redirect('/login')
 
-  fields = ['proceeded', 'siteid', 'wheels']
+  fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 'smState=%s',
+            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+  values = {}
   for f in fields:
+    value = request.forms.get(f.split('=')[0])
     try:
-      print int(request.forms.get(f))
+      if '.' in value: values[f] = float(value)
+      else: values[f] = int(value)
     except:
-      print f
-  #results = db_man.fetch_recs(overweight, proceeded)
-  #details = db_man.fetch_recs(overweight, proceeded, brf=False)
-  results = [UserDb.Record.TAB_BRF_HDR, (1, 20001, '2015-09-20 12:00:00.123445', '浙A56789')]
-  details = [UserDb.Record.TAB_HDR, 
-            (1, 20001, 2, '2015-09-20 12:00:00.123445', '浙A56789', '正常', 2, 40, 2000.23, 1, 30000, 10.1, 'c:\\a.jpg', 'c:\\b.jpg')]
+      if value:
+        if value == 'None': values[f] = None
+        else: values[f] = value.decode('utf-8')
+  cond = cons_query_where_clause(values)
+  interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
+  results = db_man.fetch_cond_recs(cond, interval)
+  details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/rec_proceed.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
                   details=details)
 
+@route('/proceed_approval')
+def proc_appr():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/proc_approval.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, results=None)
+
+@route('/proceed_approval', method='POST')
+def proc_appr():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 
+            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+  values = {}
+  for f in fields:
+    value = request.forms.get(f.split('=')[0])
+    try:
+      if '.' in value: values[f] = float(value)
+      else: values[f] = int(value)
+    except:
+      if value:
+        if value == 'None': values[f] = None
+        else: values[f] = value.decode('utf-8')
+  cond = cons_query_where_clause(values)
+  interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
+  results = db_man.fetch_cond_recs(cond, interval)
+  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  return template('./view/bsfiles/view/proc_approval.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user, privs=privs,
+                  results=results,
+                  details=details)
+
+@route('/approved/<seq>')
+def approved(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  try:
+    db_man.update_read_flag(int(seq), UserDb.ProceedState.APPROVED)
+  except:
+    return '更新失败！纪录不存在！%s'%(seq,)
+  redirect('/proceed_approval')
+
+@route('/disapproved/<seq>')
+def approved(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  try:
+    db_man.update_read_flag(int(seq), None)
+  except:
+    return '更新失败！纪录不存在！%s'%(seq,)
+  redirect('/proceed_approval')
 
 @route('/user_roles')
 def role_mng():
@@ -221,6 +318,244 @@ def role_mng():
                   roles=UserDb.get_roles(),
                   privs=UserDb.get_privilege(act_user.role),
                   curr_user=get_act_user())
+
+@route('/register')
+def register():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/proc_rec.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, results=None)
+
+@route('/register', method='POST')
+def register():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 
+            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+  values = {}
+  for f in fields:
+    value = request.forms.get(f.split('=')[0])
+    try:
+      if '.' in value: values[f] = float(value)
+      else: values[f] = int(value)
+    except:
+      if value:
+        if value == 'None': values[f] = None
+        else: values[f] = value.decode('utf-8')
+  cond = cons_query_where_clause(values)
+  interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
+  results = db_man.fetch_cond_recs(cond, interval)
+  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  return template('./view/bsfiles/view/proc_rec.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user, privs=privs,
+                  results=results,
+                  details=details)
+
+@route('/register/<seq>', method='POST')
+def register(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  ts = request.forms.get('regtime')
+  print ts
+  try:
+    db_man.update_read_flag(int(seq), UserDb.ProceedState.REGISTERING)
+    db_man.update_regtime(int(seq), ts)
+  except:
+    return '更新失败！纪录不存在！%s'%(seq,)
+  redirect('/register')
+
+@route('/reg_approval')
+def regappr():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/reg_approval.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, results=None)
+
+@route('/reg_approval', method='POST')
+def regappr():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 
+            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+  values = {}
+  for f in fields:
+    value = request.forms.get(f.split('=')[0])
+    try:
+      if '.' in value: values[f] = float(value)
+      else: values[f] = int(value)
+    except:
+      if value:
+        if value == 'None': values[f] = None
+        else: values[f] = value.decode('utf-8')
+  cond = cons_query_where_clause(values)
+  interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
+  results = db_man.fetch_cond_recs(cond, interval)
+  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  return template('./view/bsfiles/view/reg_approval.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user, privs=privs,
+                  results=results,
+                  details=details)
+
+@route('/registered/<seq>')
+def regappr(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  try:
+    db_man.update_read_flag(int(seq), UserDb.ProceedState.REGISTERED)
+  except:
+    return '更新失败！纪录不存在！%s'%(seq,)
+  redirect('/reg_approval')
+
+@route('/blacklist_query')
+def blquery():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/blacklist_query.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, blist=db_man.get_blacklist())
+
+@route('/blacklist_mng')
+def blmng():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/blacklist_mng.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, blist=db_man.get_blacklist())
+
+@route('/request_black', method='POST')
+def reqbl():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  plate = request.forms.get('plate').decode('utf-8')
+  db_man.add_blacklist(plate)
+  redirect('/blacklist_mng')
+
+@route('/del_black/<seq>', method='POST')
+def delblack(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  db_man.update_blacklist_state(seq, UserDb.BlackList.DELETING)
+  redirect('/blacklist_mng')
+
+@route('/cancel_black/<seq>', method='POST')
+def cancel(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  db_man.cancel_blacklist_state(seq)
+  redirect('/blacklist_mng')
+
+@route('/blacklist_approval')
+def blappr():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  return template('./view/bsfiles/view/blacklist_approval.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user,
+                  privs=privs, blist=db_man.get_blacklist())
+
+@route('/disappr_blacklist/<seq>')
+def disappr(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  db_man.cancel_blacklist_state(seq)
+  redirect('/blacklist_approval')
+
+@route('/appr_blacklist/<seq>')
+def disappr(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+
+  db_man.confirm_blacklist_state(seq)
+  redirect('/blacklist_approval')
 
 @route('/add_role', method='POST')
 def add_role():
@@ -429,6 +764,8 @@ def send_static(filename):
 
 def main():
   #sdb.main()
+  db_man.get_param()
+  db_man.create_tables()
   init_user_db()
   #dbporc = Process(target=sdb.run_sock_svr, args=())
   #dbporc.start()

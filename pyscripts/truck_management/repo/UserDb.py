@@ -96,7 +96,7 @@ def get(usrname):
   cur = conn.cursor()
   userinfo = cur.execute('SELECT * FROM users WHERE name=?', (usrname,)).fetchone()
   if userinfo is not None:
-    print userinfo
+    #print userinfo
     username, passwd, nickname, role, desc, regts = userinfo
     return User(username, passwd, nickname=nickname, desc=desc, role=role, regts=regts)
   else:
@@ -184,7 +184,7 @@ def add_role(role):
 
 def add_root():
   root = Role('超级管理员',
-              ['超限处理', '处理审核', '超限处理登记', '登记审核', '黑名单增删', '黑名单审核', '用户增删'])
+              ['超限处理', '处理审核', '超限处理登记', '超限处理登记审核', '黑名单增删', '黑名单审核', '用户增删'])
   root.put()
 
 def add_default_roles():
@@ -243,7 +243,7 @@ def del_role(rn):
 
 class Record(object):
   TAB_HDR = ('序号', '纪录编号', '站点编号', '时间', '车牌号', '状态', '轴数', 
-            '车速', '车重', '车道', '限载', '载重比', '车头照片', '车尾照片')
+            '车速', '车重', '车道', '限载', '载重比', '处理登记时间')
   TAB_BRF_HDR = ('序号', '纪录编号', '时间', '车牌号')
 
   def __init__(self, seq, recid, siteid, ts, plate, state, wheels, speed, weight, 
@@ -268,5 +268,23 @@ class Record(object):
     pass
 
 
+class ProceedState:
+  APPROVING = 1
+  APPROVED = 2
+  REGISTERING = 3
+  REGISTERED = 4
+
+  def __init__(self):
+    pass
+
 class BlackList:
-  pass
+  REQUESTING = 0
+  DELETING = 1
+  APPROVED = 2
+
+  def __init__(self): pass
+
+
+
+
+
