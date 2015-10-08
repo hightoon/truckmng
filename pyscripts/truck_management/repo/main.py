@@ -18,6 +18,11 @@ from bottle import route, request, redirect, template,static_file, run, app, hoo
 from ftplib import FTP
 from beaker.middleware import SessionMiddleware
 
+# for py2exe module search
+import _mssql
+import decimal
+# end of py2exe module search
+
 import UserDb
 import db_man
 
@@ -763,18 +768,13 @@ def send_static(filename):
 
 
 def main():
-  #sdb.main()
   db_man.get_param()
   db_man.create_tables()
   init_user_db()
-  #dbporc = Process(target=sdb.run_sock_svr, args=())
-  #dbporc.start()
-  websvr = Process(target=run, args=(app, 'wsgiref', '0.0.0.0', '8081'))
-  websvr.start()
-  #dbporc.join()
-  websvr.join()
-  #run(host='localhost', port=8081, Debug=True, reloader=False)
-  #run(host='localhost', port=80, Debug=True)
+  #websvr = Process(target=run, args=(app, 'wsgiref', '0.0.0.0', '8081'))
+  #websvr.start()
+  #websvr.join()
+  run(app, host='0.0.0.0', port=8081, Debug=True, reloader=False)
 
 
 if __name__ == '__main__':
