@@ -101,27 +101,28 @@
 	          	</tr>
 	          </thead>
 	          <tbody>
-	          	%for res in results[1:]:
+	          	%for res in details[1:]:
 	          	  <tr>
-	          	  %for col in res:
+	          	  %for col in res[0]:
 	          	    <td>{{col}}</td>
 	          	  %end
 	          	  <td>
-	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#rec-modula">
+	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
+	          	  			data-target="#rec-modula-{{res[1][0]}}">
 	          	  		查看详情
 	          	  	</button>
-	          	  	%if details[results.index(res)][-1] == 1:
+	          	  	%if res[1][-1] == 1:
 	          	  		<button class="btn btn-sm btn-primary" 
-	          	  				onclick="alert('处理申请已通过审核!等待处理登记!');location.href='/approved/{{res[0]}}';">
+	          	  				onclick="alert('处理申请已通过审核!等待处理登记!');location.href='/approved/{{res[1][0]}}';">
 	          	  			审核通过
 	          	  		</button>
 	          	  		<button class="btn btn-sm btn-warning" 
-	          	  				onclick="alert('处理申请已拒绝!如需复审请重新提交申请!');location.href='/disapproved/{{res[0]}}';">
+	          	  				onclick="alert('处理申请已拒绝!如需复审请重新提交申请!');location.href='/disapproved/{{res[1][0]}}';">
 	          	  			拒绝处理
 	          	  		</button>
 	          	  	%end
 	          	  	
-	          	  	%include ('./view/bsfiles/view/query_modula.tpl', detail=details[results.index(res)])
+	          	  	%include ('./view/bsfiles/view/query_modula.tpl')
 	          	  </td>
 	          	  </tr>
 	          	%end

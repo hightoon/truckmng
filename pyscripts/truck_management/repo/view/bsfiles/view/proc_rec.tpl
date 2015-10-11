@@ -101,16 +101,17 @@
 	          	</tr>
 	          </thead>
 	          <tbody>
-	          	%for res in results[1:]:
+	          	%for res in details[1:]:
 	          	  <tr>
-	          	  %for col in res:
+	          	  %for col in res[0]:
 	          	    <td>{{col}}</td>
 	          	  %end
 	          	  <td>
-	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#rec-modula">
+	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
+	          	  			data-target="#rec-modula-{{res[1][0]}}">
 	          	  		查看详情
 	          	  	</button>
-	          	  	%if details[results.index(res)][-1] == 2:
+	          	  	%if res[1][-1] == 2:
 	          	  		<!--button class="btn btn-sm btn-primary" 
 	          	  				onclick="alert('处理已登记!等待登记审核!');location.href='/register/{{res[0]}}';">
 	          	  			处理登记
@@ -121,8 +122,8 @@
 	          	  		</button>
 	          	  	%end
 	          	  	
-	          	  	%include ('./view/bsfiles/view/query_modula.tpl', detail=details[results.index(res)])
-	          	  	%include ('./view/bsfiles/view/register_modula.tpl', seq=res[0])
+	          	  	%include ('./view/bsfiles/view/query_modula.tpl')
+	          	  	%include ('./view/bsfiles/view/register_modula.tpl', seq=res[1][0])
 	          	  </td>
 	          	  </tr>
 	          	%end

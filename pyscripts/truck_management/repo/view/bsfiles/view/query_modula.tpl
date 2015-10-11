@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="-1" role="document" id="rec-modula">
+<div class="modal fade" tabindex="-1" role="document" id="rec-modula-{{res[1][0]}}">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <h3 class="sub-header">纪录详情</h3>
@@ -12,7 +12,7 @@
 	    </thead>
 	    <tbody>
 	      	<tr>
-	      	  %for col in detail[:-3]:
+	      	  %for col in res[1][:-3]:
 	      	    <td>{{col}}</td>
 	      	  %end
 	      	</tr>

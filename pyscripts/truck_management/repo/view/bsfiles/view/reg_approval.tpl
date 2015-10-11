@@ -101,23 +101,24 @@
 	          	</tr>
 	          </thead>
 	          <tbody>
-	          	%for res in results[1:]:
+	          	%for res in details[1:]:
 	          	  <tr>
-	          	  %for col in res:
+	          	  %for col in res[0]:
 	          	    <td>{{col}}</td>
 	          	  %end
 	          	  <td>
-	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#rec-modula">
+	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
+	          	  			data-target="#rec-modula-{{res[1][0]}}">
 	          	  		查看详情
 	          	  	</button>
-	          	  	%if details[results.index(res)][-1] == 3:
+	          	  	%if res[1][-1] == 3:
 	          	  		<button class="btn btn-sm btn-primary" 
-	          	  				onclick="alert('登记已审核!');location.href='/registered/{{res[0]}}';">
+	          	  				onclick="alert('登记已审核!');location.href='/registered/{{res[1][0]}}';">
 	          	  			登记审核通过
 	          	  		</button>
 	          	  	%end
 	          	  	
-	          	  	%include ('./view/bsfiles/view/query_modula.tpl', detail=details[results.index(res)])
+	          	  	%include ('./view/bsfiles/view/query_modula.tpl')
 	          	  </td>
 	          	  </tr>
 	          	%end

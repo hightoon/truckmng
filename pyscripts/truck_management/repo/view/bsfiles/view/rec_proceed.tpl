@@ -15,14 +15,14 @@
 		      	  	  <label class="col-sm-4 control-label">开始时间</label>
 		      	  	  <div class="col-sm-6">
 		        	  	<input type="date" class="form-control input-sm" id="startdate" name="startdate" 
-		        	  	placeholder="2015-01-30"/>
+		        	  	placeholder="2015-01-30 15:55:06"/>
 		        	  </div>
 		          </td>
 		          <td>
 		      	  	  <label class="col-sm-4 control-label">结束时间</label>
 		      	  	  <div class="col-sm-6">
 		        	  	<input type="date" class="form-control input-sm" id="enddate" name="enddate" 
-		        	  	placeholder="2015-01-30"/>
+		        	  	placeholder="2015-01-30 15:55:07"/>
 		        	  </div>
 		          </td>
 		          <td>
@@ -111,25 +111,26 @@
 	          	</tr>
 	          </thead>
 	          <tbody>
-	          	%for res in results[1:]:
+	          	%for res in details[1:]:
 	          	  <tr>
-	          	  %for col in res:
+	          	  %for col in res[0]:
 	          	    <td>{{col}}</td>
 	          	  %end
 	          	  <td>
-	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#rec-modula">
+	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
+	          	  			data-target="#rec-modula-{{res[1][0]}}">
 	          	  		查看详情
 	          	  	</button>
-	          	  	%if details[results.index(res)][-1] is None:
+	          	  	%if res[1][-1] is None:
 	          	  		<button class="btn btn-sm btn-primary" 
-	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[0]}}';">
+	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[1][0]}}';">
 	          	  			申请处理
 	          	  		</button>
 	          	  	%else:
 	          	  		<button>处理中</button>
 	          	  	%end
 	          	  	
-	          	  	%include ('./view/bsfiles/view/query_modula.tpl', detail=details[results.index(res)])
+	          	  	%include ('./view/bsfiles/view/query_modula.tpl')
 	          	  </td>
 	          	  </tr>
 	          	%end
