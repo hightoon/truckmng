@@ -285,10 +285,14 @@ def fetch_cond_recs(cond, interval, brf=True):
         else:
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
-                results.append((row['Xuhao'], row['RecordID'], row['SiteID'], row['smTime'], row['VehicheCard'],
+                results.append(
+                               ((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']),
+                                (row['Xuhao'], row['RecordID'], row['SiteID'], row['smTime'], row['VehicheCard'],
                                 row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
                                 row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
-                                row['smPlatePath'], row['smImgPath'], row['ReadFlag']))
+                                row['smPlatePath'], row['smImgPath'], row['ReadFlag'])
+                              )
+                            )
     else:
         results = None
 

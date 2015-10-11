@@ -9,7 +9,7 @@
 import sys
 
 import time, urllib2, sqlite3, re, socket, os
-import time, urllib2, sqlite3
+#import time, urllib2, sqlite3
 #import SqlCmdHelper
 from datetime import datetime
 from subprocess import Popen
@@ -153,10 +153,11 @@ def send_query_results():
   except:
     redirect('/login')
 
-  fields = ('ReadFlag=%d', 'smState=%s')
+  fields = ('ReadFlag=%d', 'smState=%s', 'smWheelCount=%d',
+            'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=')[0])
+    value = request.forms.get(re.split('>|=', f)[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
@@ -166,6 +167,7 @@ def send_query_results():
         else: values[f] = value.decode('utf-8')
   cond = cons_query_where_clause(values)
   interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
+  print cond
   results = db_man.fetch_cond_recs(cond, interval)
   details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/vehicle_query.tpl',
@@ -215,10 +217,10 @@ def proceed_query():
     redirect('/login')
 
   fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 'smState=%s',
-            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+            'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=')[0])
+    value = request.forms.get(re.split('=|>', f)[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
@@ -262,10 +264,10 @@ def proc_appr():
     redirect('/login')
 
   fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 
-            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+            'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=')[0])
+    value = request.forms.get(re.split('>|=', f)[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
@@ -350,10 +352,10 @@ def register():
     redirect('/login')
 
   fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 
-            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+            'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=')[0])
+    value = request.forms.get(f.split('=' or '>')[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
@@ -415,10 +417,10 @@ def regappr():
     redirect('/login')
 
   fields = ('ReadFlag=%d', 'SiteID=%d', 'smWheelCount=%d', 
-            'VehicheCard=%s', 'smLimitWeightPercent=%d', 'smTotalWeight=%d')
+            'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=')[0])
+    value = request.forms.get(f.split('=' or '>')[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
