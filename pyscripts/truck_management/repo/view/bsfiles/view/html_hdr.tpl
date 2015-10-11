@@ -9,7 +9,7 @@
 
     <!-- Bootstrap -->
     <link href="/static/view/bsfiles/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/view/bsfiles/js/datetator-master/fm.datetator.jquery.css" rel="stylesheet">
+    <!--link href="/static/view/bsfiles/js/datetator-master/fm.datetator.jquery.css" rel="stylesheet"-->
 
     <!-- other custom style/js files -->
     %if custom_hdr:

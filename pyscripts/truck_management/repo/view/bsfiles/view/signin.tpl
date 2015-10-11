@@ -15,7 +15,7 @@
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
       </form>
-
+      <br><br><br><br><br><br><br><br><br><br>
     </div> <!-- /container -->
 
 %include ('./view/bsfiles/view/html_footer.tpl')

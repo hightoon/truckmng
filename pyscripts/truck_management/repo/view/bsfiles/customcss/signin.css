@@ -2,16 +2,16 @@ body {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #eee;
+  background-image: url('/static/view/bsfiles/images/login-bg.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
-  background-image: url('/static/view/bsfiles/images/login-bg.jpg');
-  background-repeat: repeat-x repeat-y;
-  background-position: center;
-  background-size: 100% 100%;
 }
 .form-signin .form-signin-heading,
 .form-signin .checkbox {

@@ -776,7 +776,7 @@ def main():
   #websvr = Process(target=run, args=(app, 'wsgiref', '0.0.0.0', '8081'))
   #websvr.start()
   #websvr.join()
-  run(app, host='0.0.0.0', port=8081, Debug=True, reloader=False)
+  run(app, host='0.0.0.0', port=8081, Debug=False, reloader=False)
 
 
 if __name__ == '__main__':
