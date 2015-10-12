@@ -24,6 +24,14 @@ tabname2sqlcmd = {
     'blacklist': 4
 }
 
+status = {
+    None: '未处理',
+    1: '已申请处理',
+    2: '处理申请已审核',
+    3: '处理已登记',
+    4: '处理登记已审核'
+}
+
 init_db_cmds = [
     """ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[LimitW]') and 
         OBJECTPROPERTY(id, N'IsUserTable') = 1)
@@ -216,7 +224,9 @@ def fetch_all_bad_brf(n):
     rows = cur.fetchall()
     if rows:
         for row in rows:
-            results.append((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']))
+            results.append((row['Xuhao'], get_site_name(row['SiteID']), 
+                            row['smTime'], row['VehicheCard'], row['smTotalWeight'],
+                            row['smLimitWeightPercent'], status[row['ReadFlag']],))
     conn.close()
     return results
 
@@ -265,7 +275,6 @@ def fetch_recs(ow='', proc='', brf=True):
             return fetch_all_good()
 
 def fetch_cond_recs(cond, interval, brf=True):
-    print cond, interval
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
     if interval:
@@ -283,16 +292,20 @@ def fetch_cond_recs(cond, interval, brf=True):
         if brf:
             results = [UserDb.Record.TAB_BRF_HDR]
             for row in rows:
-                results.append((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']))
+                results.append((row['Xuhao'], get_site_name(row['SiteID']), 
+                                row['smTime'], row['VehicheCard'], row['smTotalWeight'],
+                                row['smLimitWeightPercent'], status[row['ReadFlag']],))
         else:
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
                 results.append(
-                               ((row['Xuhao'], row['RecordID'], row['smTime'], row['VehicheCard']),
-                                (row['Xuhao'], row['RecordID'], row['SiteID'], row['smTime'], row['VehicheCard'],
-                                row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
-                                row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
-                                row['smPlatePath'], row['smImgPath'], row['ReadFlag'])
+                               ((row['Xuhao'], get_site_name(row['SiteID']), 
+                                 row['smTime'], row['VehicheCard'], row['smTotalWeight'],
+                                 row['smLimitWeightPercent'], status[row['ReadFlag']],),
+                                (row['Xuhao'], row['RecordID'], get_site_name(row['SiteID']), row['smTime'], row['VehicheCard'],
+                                 row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
+                                 row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
+                                 row['smPlatePath'], row['smImgPath'], row['ReadFlag'])
                               )
                             )
     else:
@@ -300,10 +313,20 @@ def fetch_cond_recs(cond, interval, brf=True):
 
     return results
 
+def get_site_name(siteid):
+    return '站点-%d'%(siteid,)
+    conn = connectdb()
+    cur = conn.cursor(as_dict=True)
+    cur.execute('SELECT * FROM smSites WHERE SiteID=%d', row['SiteID'])
+    sn = cur.fetchone()
+    conn.close()
+    return sn
+
 def update_read_flag(seq, value):
     conn = connectdb()
     cur = conn.cursor()
-    cur.execute('UPDATE smHighWayDate SET ReadFlag=%d WHERE Xuhao=%d', (value, seq))
+    cur.execute('UPDATE smHighWayDate SET ReadFlag=%d, ProcTime=CAST(%s AS DATETIME) WHERE Xuhao=%d', 
+                (value, datetime.strftime(datetime.now(),'%Y-%m-%d %H:%M:%S'), seq))
     conn.close()
 
 def update_regtime(seq, ts):

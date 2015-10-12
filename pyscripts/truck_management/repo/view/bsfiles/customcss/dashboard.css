@@ -5,12 +5,11 @@
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 50px;
-  background-image: url('/static/view/bsfiles/images/main-bg.jpg');
-  /*background-repeat: repeat-x repeat-y;*/
+  /*background-image: url('/static/view/bsfiles/images/main-bg.jpg');
   background-repeat: repeat-y;
   background-position: center;
   background-size: 100% 100%;
-  background-attachment: fixed;
+  background-attachment: fixed;*/
 }
 
 
@@ -72,6 +71,24 @@ body {
   background-color: #428bca;
 }
 
+th.rotate {
+  /* Something you can count on */
+  height: 140px;
+  white-space: nowrap;
+}
+
+th.rotate > div {
+  transform: 
+    /* Magic Numbers */
+    /*translate(25px, 51px)*/
+    /* 45 is really 360 - 45 */
+    rotate(315deg);
+  width: 30px;
+}
+th.rotate > div > span {
+  border-bottom: 1px solid #ccc;
+  padding: 5px 10px;
+}
 
 /*
  * Main content

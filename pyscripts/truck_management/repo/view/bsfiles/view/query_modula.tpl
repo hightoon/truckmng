@@ -2,11 +2,11 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <h3 class="sub-header">纪录详情</h3>
-	  <table class="table table-striped table-responsive">  
+	  <table class="table" id="query-table">  
 	    <thead>
 	        <tr>
 	      	  %for col in details[0]:
-	      	    <th>{{col}}</th>
+	      	    <th class="rotate"><div><span>{{col}}</span></div></th>
 	      	  %end
 	      	</tr>
 	    </thead>

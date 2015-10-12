@@ -153,7 +153,7 @@ def send_query_results():
   except:
     redirect('/login')
 
-  fields = ('ReadFlag=%d', 'smState=%s', 'smWheelCount=%d',
+  fields = ('ReadFlag=%d', 'smState=%s', 'smWheelCount=%d', 'SiteID=%d',
             'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
@@ -238,7 +238,8 @@ def proceed_query():
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details)
+                  details=details,
+                  imgpath=db_man.ftpp)
 
 @route('/proceed_approval')
 def proc_appr():
@@ -285,7 +286,8 @@ def proc_appr():
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details)
+                  details=details,
+                  imgpath=db_man.ftpp)
 
 @route('/approved/<seq>')
 def approved(seq):
@@ -357,7 +359,7 @@ def register():
             'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=' or '>')[0])
+    value = request.forms.get(re.split('=|>', f)[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
@@ -373,7 +375,8 @@ def register():
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details)
+                  details=details,
+                  imgpath=db_man.ftpp)
 
 @route('/register/<seq>', method='POST')
 def register(seq):
@@ -422,7 +425,7 @@ def regappr():
             'VehicheCard=%s', 'smLimitWeightPercent>%d', 'smTotalWeight=%d')
   values = {}
   for f in fields:
-    value = request.forms.get(f.split('=' or '>')[0])
+    value = request.forms.get(re.split('=|>', f)[0])
     try:
       if '.' in value: values[f] = float(value)
       else: values[f] = int(value)
@@ -438,7 +441,8 @@ def regappr():
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details)
+                  details=details,
+                  imgpath=db_man.ftpp)
 
 @route('/registered/<seq>')
 def regappr(seq):
