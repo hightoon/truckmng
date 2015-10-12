@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>车辆超限信息查询系统</title>
+    <title>路政车辆信息查询系统</title>
 
     <!-- Bootstrap -->
     <link href="/static/view/bsfiles/css/bootstrap.min.css" rel="stylesheet">
