@@ -1,5 +1,6 @@
-host 192.168.0.3
+host 10.140.163.132
 inst sqlexpress
-user haitong
+user quentin
 pass 111111
 dbnm ssss
+ftpp ftp://codec:111111@10.140.162.228/Pictures/
