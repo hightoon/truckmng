@@ -14,14 +14,14 @@
 	      	  	  <td>
 		      	  	  <label class="col-sm-4 control-label">开始时间</label>
 		      	  	  <div class="col-sm-6">
-		        	  	<input type="date" class="form-control input-sm" id="startdate" name="startdate" 
+		        	  	<input type="text" class="form-control input-sm" id="startdate" name="startdate" 
 		        	  	placeholder="2015-01-30 15:55:06"/>
 		        	  </div>
 		          </td>
 		          <td>
 		      	  	  <label class="col-sm-4 control-label">结束时间</label>
 		      	  	  <div class="col-sm-6">
-		        	  	<input type="date" class="form-control input-sm" id="enddate" name="enddate" 
+		        	  	<input type="text" class="form-control input-sm" id="enddate" name="enddate" 
 		        	  	placeholder="2015-01-30 15:55:07"/>
 		        	  </div>
 		          </td>
