@@ -14,6 +14,7 @@ inst = None
 user = None
 pswd = None
 dbnm = None
+ftpp = None
 
 tabname2sqlcmd = {
     'LimitW': 0,
@@ -109,7 +110,7 @@ setup_db_cmds = [
 ]
 
 def get_param():
-    global host, inst, user, pswd, dbnm
+    global host, inst, user, pswd, dbnm, ftpp
     with open('conf.txt', 'rb') as conf:
         for ln in conf:
             param = ln.split()
@@ -118,6 +119,7 @@ def get_param():
             elif param[0] == 'user': user = param[1]
             elif param[0] == 'pass': pswd = param[1]
             elif param[0] == 'dbnm': dbnm = param[1]
+            elif param[0] == 'ftpp': ftpp = param[1]
             else: pass
 
 def exec_sql_file(cur, f):

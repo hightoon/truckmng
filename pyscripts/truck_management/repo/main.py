@@ -170,11 +170,13 @@ def send_query_results():
   print cond
   results = db_man.fetch_cond_recs(cond, interval)
   details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  print db_man.ftpp
   return template('./view/bsfiles/view/vehicle_query.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details)
+                  details=details,
+                  imgpath=db_man.ftpp)
 
 @route('/proceed')
 def proceed():

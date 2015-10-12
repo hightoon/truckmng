@@ -6,21 +6,32 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
+  background-attachment: fixed;
 }
+
+.verinfo, .compinfo {
+  color: white;
+  text-align: center;
+}
+
+.verinfo { margin-left: 48%; }
+.compinfo { margin-left: 46%; }
 
 .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
 }
+.form-signin .form-signin-heading { padding-left: 25px; }
+
 .form-signin .form-signin-heading,
 .form-signin .checkbox {
   margin-bottom: 15px;
 }
-.form-signin .checkbox {
+.form-signin .checkbox .verinfo {
   font-weight: normal;
 }
-.form-signin .form-control {
+.form-signin .form-control .verinfo{
   position: relative;
   height: auto;
   -webkit-box-sizing: border-box;

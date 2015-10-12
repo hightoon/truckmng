@@ -29,13 +29,13 @@
 		  <h4>车辆照片</h4>
 		  <div class="carousel-inner" role="listbox">
 		    <div class="item active">
-		      <img src="http://d6.yihaodianimg.com/N03/M09/BD/64/CgQCtVNRDUKAFbKXAAFSdWsrqx406300.jpg" alt="车头照片">
+		      <img src="{{imgpath}}{{res[1][-3]}}" alt="车头照片">
 		      <div class="carousel-caption">
 		        车头照片
 		      </div>
 		    </div>
 		    <div class="item">
-		      <img src="http://d6.yihaodianimg.com/N03/M09/BD/64/CgQCtVNRDUKAFbKXAAFSdWsrqx406300.jpg" alt="车尾照片">
+		      <img src="{{imgpath}}{{res[1][-2]}}" alt="车尾照片">
 		      <div class="carousel-caption">
 		        车尾照片
 		      </div>
@@ -52,7 +52,7 @@
 		    <span class="sr-only">Next</span>
 		  </a>
 		</div>
-		<a class="link" href="javascript:window.print();">打印</a>
+		<a class="link printbut" href="javascript:window.print();">打印</a>
     </div>
   </div>
 </div>
