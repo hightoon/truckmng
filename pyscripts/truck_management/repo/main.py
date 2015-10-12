@@ -391,7 +391,7 @@ def register(seq):
   print ts
   try:
     db_man.update_read_flag(int(seq), UserDb.ProceedState.REGISTERING)
-    db_man.update_regtime(int(seq), ts)
+    if ts: db_man.update_regtime(int(seq), ts)
   except:
     return '更新失败！纪录不存在！%s'%(seq,)
   redirect('/register')
