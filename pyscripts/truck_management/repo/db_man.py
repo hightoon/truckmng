@@ -306,7 +306,7 @@ def fetch_cond_recs(cond, interval, brf=True):
                                 (row['Xuhao'], row['RecordID'], get_site_name(row['SiteID']), row['smTime'], row['VehicheCard'],
                                  row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
                                  row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
-                                 row['smPlatePath'].replace('\\', '/'), row['smImgPath'].replace('\\', '/'), 
+                                 row['smPlatePath'], row['smImgPath'], 
                                  row['ReadFlag'])
                               )
                             )
