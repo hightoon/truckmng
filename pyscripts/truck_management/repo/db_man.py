@@ -135,9 +135,9 @@ def retr_img_from_ftp(filename):
         ret = False
       else:
         try:
-          ftp.retrbinary('RETR ' + localfn, lf.write)
+          ftp.retrbinary('RETR ' + filename, lf.write)
         except Exception as e:
-          print e
+          print 'get pic failed', e
           ret = False
         finally:
           ftp.quit()
