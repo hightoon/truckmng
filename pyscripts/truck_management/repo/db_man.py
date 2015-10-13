@@ -123,7 +123,8 @@ def retr_img_from_ftp(filename):
   hosts = ['172.16.33.3']
   ret = True
   print 'get pic'
-  with open(filename, 'wb') as lf:
+  localfn = filename.replace('/', '_')
+  with open(localfn, 'wb') as lf:
     for host in hosts:
       try:
         ftp = FTP(host, timeout=0.5)
@@ -133,14 +134,14 @@ def retr_img_from_ftp(filename):
         ret = False
       else:
         try:
-          ftp.retrbinary('RETR ' + filename, lf.write)
+          ftp.retrbinary('RETR ' + localfn, lf.write)
         except Exception as e:
           print e
           ret = False
         finally:
           ftp.quit()
     if not ret:
-      os.remove(filename)
+      os.remove(localfn)
     return ret
 
 def get_param():
