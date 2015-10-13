@@ -326,6 +326,8 @@ def fetch_cond_recs(cond, interval, brf=True):
         else:
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
+                retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
+                retr_img_from_ftp(row['smImgPath'].replace(r'\\', '/'))
                 results.append(
                                ((row['Xuhao'], get_site_name(row['SiteID']),
                                  datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'),
@@ -334,12 +336,10 @@ def fetch_cond_recs(cond, interval, brf=True):
                                 (row['Xuhao'], row['RecordID'], get_site_name(row['SiteID']), row['smTime'], row['VehicheCard'],
                                  row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
                                  row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
-                                 row['smPlatePath'].replace(r'\\', '/'), row['smImgPath'], 
+                                 row['smPlatePath'].replace(r'\\', '_'), row['smImgPath'].replace(r'\\', '_'), 
                                  row['ReadFlag'])
                               )
                             )
-                print row['smPlatePath'].replace(r'\\', '/')
-                retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
     else:
         results = None
 
