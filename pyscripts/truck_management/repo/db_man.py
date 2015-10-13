@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 import pymssql
 import UserDb
 from datetime import datetime
@@ -326,8 +327,10 @@ def fetch_cond_recs(cond, interval, brf=True):
         else:
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
-                retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
-                retr_img_from_ftp(row['smImgPath'].replace(r'\\', '/'))
+                if not os.path.isfile(row['smPlatePath'].replace(r'\\', '_')):
+                    retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
+                if not os.path.isfile(row['smImgPath'].replace(r'\\', '_')):
+                    retr_img_from_ftp(row['smImgPath'].replace(r'\\', '_'))
                 results.append(
                                ((row['Xuhao'], get_site_name(row['SiteID']),
                                  datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'),
