@@ -119,6 +119,7 @@ setup_db_cmds = [
 ]
 
 def retr_img_from_ftp(filename):
+  import os
   usr, passwd = 'WeightDataService', '660328'
   hosts = ['172.16.33.3']
   ret = True
