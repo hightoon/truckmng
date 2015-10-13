@@ -50,14 +50,14 @@
 		  </a>
 		</div-->
 		<div class="item">
-	      <img src="{{res[1][-3]}}[1:]" alt="车头照片" width="800px" height="600px">
+	      <img src="./{{res[1][-3]}}" alt="车头照片" width="800px" height="600px">
 	      <div class="carousel-caption">
 	        车头照片
 	      </div>
 	    </div>
 	    <br>
 	    <div class="item">
-	      <img src="{{res[1][-2]}}[1:]" alt="车尾照片" width="800px" height="600px">
+	      <img src="./{{res[1][-2]}}" alt="车尾照片" width="800px" height="600px">
 	      <div class="carousel-caption">
 	        车尾照片
 	      </div>
