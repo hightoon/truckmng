@@ -307,8 +307,15 @@ def fetch_cond_recs(cond, interval, brf=True):
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
     if interval:
-        timestr = " smTime between \'%s\' and \'%s\'"%(interval[0], interval[1])
-    else: timestr = ''
+        startt = interval[0]
+        endt = interval[1]
+    else:
+        startt = datetime.strftime(datetime.now(), '%Y-%m-%d') + '00:00:00'
+        endt = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+
+    #if interval:
+    timestr = " smTime between \'%s\' and \'%s\'"%(startt, endt)
+    #else: timestr = ''
     if cond[0]:
         if timestr: timestr = ' and ' + timestr
         cur.execute('SELECT * FROM smHighWayDate WHERE ' + cond[0] + timestr, cond[1])
