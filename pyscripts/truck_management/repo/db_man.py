@@ -310,7 +310,7 @@ def fetch_cond_recs(cond, interval, brf=True):
         startt = interval[0]
         endt = interval[1]
     else:
-        startt = datetime.strftime(datetime.now(), '%Y-%m-%d') + '00:00:00'
+        startt = datetime.strftime(datetime.now(), '%Y-%m-%d') + ' 00:00:00'
         endt = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
 
     #if interval:
