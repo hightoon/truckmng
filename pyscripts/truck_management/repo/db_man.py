@@ -301,15 +301,16 @@ def fetch_cond_recs(cond, interval, brf=True):
                 results.append(
                                ((row['Xuhao'], get_site_name(row['SiteID']),
                                  datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'),
-                                 row['VehicheCard'], row['smTotalWeight'],
+                                 row['VehicheCard'], row['smTotalWeight']/1000,
                                  row['smLimitWeightPercent'], status[row['ReadFlag']],),
                                 (row['Xuhao'], row['RecordID'], get_site_name(row['SiteID']), row['smTime'], row['VehicheCard'],
                                  row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
                                  row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
-                                 row['smPlatePath'], row['smImgPath'], 
+                                 row['smPlatePath'].replace(r'\\', '/'), row['smImgPath'], 
                                  row['ReadFlag'])
                               )
                             )
+                print row['smPlatePath'].replace(r'\\', '/')
     else:
         results = None
 
