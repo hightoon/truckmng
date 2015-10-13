@@ -337,7 +337,7 @@ def fetch_cond_recs(cond, interval, brf=True):
                 if not os.path.isfile(row['smPlatePath'].replace(r'\\', '_')):
                     retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
                 if not os.path.isfile(row['smImgPath'].replace(r'\\', '_')):
-                    retr_img_from_ftp(row['smImgPath'].replace(r'\\', '_'))
+                    retr_img_from_ftp(row['smImgPath'].replace(r'\\', '/'))
                 proctime = "记录暂未进行任何处理"
                 if row['ProcTime']: proctime = row['ProcTime']
                 results.append(
