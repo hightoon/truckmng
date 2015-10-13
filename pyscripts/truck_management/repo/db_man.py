@@ -331,6 +331,8 @@ def fetch_cond_recs(cond, interval, brf=True):
                     retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
                 if not os.path.isfile(row['smImgPath'].replace(r'\\', '_')):
                     retr_img_from_ftp(row['smImgPath'].replace(r'\\', '_'))
+                proctime = "记录暂未进行任何处理"
+                if row['ProcTime']: proctime = row['ProcTime']
                 results.append(
                                ((row['Xuhao'], get_site_name(row['SiteID']),
                                  datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'),
@@ -339,7 +341,7 @@ def fetch_cond_recs(cond, interval, brf=True):
                                 (row['Xuhao'], get_site_name(row['SiteID']), datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'), 
                                  row['VehicheCard'],
                                  row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
-                                 row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
+                                 row['smRoadNum'], row['smLimitWeight']/1000, row['smLimitWeightPercent'], proctime,
                                  row['smPlatePath'].replace(r'\\', '_'), row['smImgPath'].replace(r'\\', '_'), 
                                  row['ReadFlag'])
                               )
