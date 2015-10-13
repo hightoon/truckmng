@@ -4,6 +4,7 @@
 import pymssql
 import UserDb
 from datetime import datetime
+from ftplib import FTP
 
 """
     odbc db manipulation
@@ -116,6 +117,31 @@ setup_db_cmds = [
         ) ON [PRIMARY]
     """
 ]
+
+def retr_img_from_ftp(filename):
+  usr, passwd = 'WeightDataService', '660328'
+  hosts = ['172.16.33.3']
+  ret = True
+  print 'get pic'
+  with open(filename, 'wb') as lf:
+    for host in hosts:
+      try:
+        ftp = FTP(host, timeout=0.5)
+        ftp.login(usr, passwd)
+      except Exception as e:
+        print e
+        ret = False
+      else:
+        try:
+          ftp.retrbinary('RETR ' + filename, lf.write)
+        except Exception as e:
+          print e
+          ret = False
+        finally:
+          ftp.quit()
+    if not ret:
+      os.remove(filename)
+    return ret
 
 def get_param():
     global host, inst, user, pswd, dbnm, ftpp
@@ -311,6 +337,7 @@ def fetch_cond_recs(cond, interval, brf=True):
                               )
                             )
                 print row['smPlatePath'].replace(r'\\', '/')
+                retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
     else:
         results = None
 
