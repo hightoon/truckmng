@@ -29,8 +29,8 @@
 		          	<label class="col-sm-4 control-label">违章状态</label>
 		        	<div class="col-sm-6">
 		        	  <select class="form-control input-sm" name="smState">
-	        			<option value="正常">正常</option>
-	        			<option value="超限" selected>超限</option>
+	        			<option value="0">正常</option>
+	        			<option value="1" selected>超限</option>
 	        			<option value="">全部</option>
 		        	  </select>
 		        	</div>
