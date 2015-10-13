@@ -59,7 +59,7 @@ def cons_query_interval(dates):
   try:
     [datetime.strptime(t, timefmt) for t in dates]
   except:
-    return None
+    return datetime.strptime(datetime.now(), timefmt) + '00:00:00', datetime.strptime(datetime.now(), '%Y-%m-%d %H:%M:%S')
   else:
     return dates[0] + ' 00:00:00', dates[1] + ' 23:59:59'
 
