@@ -145,8 +145,8 @@ def exec_sql_file(cur, f):
 
 
 def connectdb():
-    conn = pymssql.connect('%s\\%s'%(host, inst), '.\\%s'%(user,), pswd, dbnm, charset='utf8')
-    #conn = pymssql.connect('192.168.0.2\\sqlexpress', '.\\haitong', '111111', 'ssss')
+    conn = pymssql.connect('%s'%(host,), '%s'%(user,), pswd, dbnm, charset='utf8')
+    #conn = pymssql.connect('172.16.33.3', 'WeightDataService', '660328', 'sifang', charset='utf8')
     conn.autocommit(True)
     return conn
 
@@ -225,7 +225,7 @@ def fetch_all_bad_brf(n):
     if rows:
         for row in rows:
             results.append((row['Xuhao'], get_site_name(row['SiteID']), 
-                            row['smTime'], row['VehicheCard'], row['smTotalWeight'],
+                            row['smTime'], row['VehicheCard'], row['smTotalWeight']/1000,
                             row['smLimitWeightPercent'], status[row['ReadFlag']],))
     conn.close()
     return results
@@ -293,19 +293,21 @@ def fetch_cond_recs(cond, interval, brf=True):
             results = [UserDb.Record.TAB_BRF_HDR]
             for row in rows:
                 results.append((row['Xuhao'], get_site_name(row['SiteID']), 
-                                row['smTime'], row['VehicheCard'], row['smTotalWeight'],
+                                row['smTime'], row['VehicheCard'], row['smTotalWeight']/1000,
                                 row['smLimitWeightPercent'], status[row['ReadFlag']],))
         else:
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
                 results.append(
-                               ((row['Xuhao'], get_site_name(row['SiteID']), 
-                                 row['smTime'], row['VehicheCard'], row['smTotalWeight'],
+                               ((row['Xuhao'], get_site_name(row['SiteID']),
+                                 datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'),
+                                 row['VehicheCard'], row['smTotalWeight'],
                                  row['smLimitWeightPercent'], status[row['ReadFlag']],),
                                 (row['Xuhao'], row['RecordID'], get_site_name(row['SiteID']), row['smTime'], row['VehicheCard'],
-                                 row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight'],
+                                 row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
                                  row['smRoadNum'], row['smLimitWeight'], row['smLimitWeightPercent'], row['ProcTime'],
-                                 row['smPlatePath'], row['smImgPath'], row['ReadFlag'])
+                                 row['smPlatePath'].replace('\\', '/'), row['smImgPath'].replace('\\', '/'), 
+                                 row['ReadFlag'])
                               )
                             )
     else:
@@ -314,13 +316,12 @@ def fetch_cond_recs(cond, interval, brf=True):
     return results
 
 def get_site_name(siteid):
-    return '站点-%d'%(siteid,)
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
-    cur.execute('SELECT * FROM smSites WHERE SiteID=%d', row['SiteID'])
+    cur.execute('SELECT * FROM smSites WHERE SiteID=%d', siteid)
     sn = cur.fetchone()
     conn.close()
-    return sn
+    return sn['SiteName']
 
 def update_read_flag(seq, value):
     conn = connectdb()

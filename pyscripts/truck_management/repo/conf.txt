@@ -1,6 +1,6 @@
-host 10.140.163.132
-inst sqlexpress
-user quentin
-pass 111111
-dbnm ssss
-ftpp ftp://codec:111111@10.140.162.228/Pictures/
+host 172.16.33.3
+inst MSSQLSERVER
+user WeightDataService
+pass 660328
+dbnm sifang
+ftpp ftp://WeightDataService:660328@172.16.33.3/
