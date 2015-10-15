@@ -246,7 +246,7 @@ def fetch_all_bad():
 def fetch_all_bad_brf(n):
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
-    cur.execute('SELECT TOP 30 * FROM smHighWayDate WHERE smState=%s ORDER BY Xuhao DESC', u'正常')
+    cur.execute('SELECT TOP 30 * FROM smHighWayDate WHERE smState=%s ORDER BY Xuhao DESC', '1')
     results = [UserDb.Record.TAB_BRF_HDR]
     rows = cur.fetchall()
     if rows:
