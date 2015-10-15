@@ -120,30 +120,27 @@ setup_db_cmds = [
 ]
 
 def retr_img_from_ftp(filename):
-  import os
-  usr, passwd = 'WeightDataService', '660328'
-  hosts = ['172.16.33.3']
-  ret = True
-  print 'get pic'
-  localfn = filename.replace('/', '_')
-  with open(localfn, 'wb') as lf:
-    for host in hosts:
-      try:
-        ftp = FTP(host, timeout=0.5)
-        ftp.login(usr, passwd)
-      except Exception as e:
-        print e
-        ret = False
-      else:
+    import os
+    usr, passwd = user, pswd
+    ret = True
+    localfn = filename.replace('/', '_')
+    with open(localfn, 'wb') as lf:
         try:
-          ftp.retrbinary('RETR ' + filename, lf.write)
+            ftp = FTP(host, timeout=0.1)
+            ftp.login(usr, passwd)
         except Exception as e:
-          print 'get pic failed', e
-          ret = False
-        finally:
-          ftp.quit()
+            print e
+            ret = False
+        else:
+            try:
+              ftp.retrbinary('RETR ' + filename, lf.write)
+            except Exception as e:
+              print 'get pic failed ', e
+              ret = False
+            finally:
+              ftp.quit()
     if not ret:
-      os.remove(localfn)
+        os.remove(localfn)
     return ret
 
 def get_param():
@@ -174,8 +171,9 @@ def exec_sql_file(cur, f):
 
 
 def connectdb():
-    conn = pymssql.connect('%s'%(host,), '%s'%(user,), pswd, dbnm, charset='utf8')
-    #conn = pymssql.connect('172.16.33.3', 'WeightDataService', '660328', 'sifang', charset='utf8')
+    #conn = pymssql.connect('%s'%(host,), '%s'%(user,), pswd, dbnm, charset='utf8')
+    conn = pymssql.connect('192.168.0.6\SQLEXPRESS', '.\\haitong', '111111', 'ssss', charset='utf8')
+    #conn = pymssql.connect('10.140.163.132\SQLEXPRESS', '.\\quentin', '111111', 'ssss', charset='utf8')
     conn.autocommit(True)
     return conn
 
@@ -254,7 +252,8 @@ def fetch_all_bad_brf(n):
     if rows:
         for row in rows:
             results.append((row['Xuhao'], get_site_name(row['SiteID']), 
-                            row['smTime'], row['VehicheCard'], row['smTotalWeight']/1000,
+                            datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'), 
+                            row['VehicheCard'], row['smTotalWeight']/1000,
                             row['smLimitWeightPercent'], status[row['ReadFlag']],))
     conn.close()
     return results
@@ -305,7 +304,14 @@ def fetch_recs(ow='', proc='', brf=True):
 
 def fetch_cond_recs(cond, interval, brf=True):
     conn = connectdb()
+    cur = conn.cursor()
+
+    cur.execute('SELECT * FROM smSites')
+    sites = cur.fetchall()
+    sites = dict(sites)
+
     cur = conn.cursor(as_dict=True)
+
     if interval:
         startt = interval[0]
         endt = interval[1]
@@ -328,10 +334,14 @@ def fetch_cond_recs(cond, interval, brf=True):
         if brf:
             results = [UserDb.Record.TAB_BRF_HDR]
             for row in rows:
-                results.append((row['Xuhao'], get_site_name(row['SiteID']), 
-                                row['smTime'], row['VehicheCard'], row['smTotalWeight']/1000,
+                sn = '站点-%d'%(row['SiteID'])
+                if sites.has_key(row['SiteID']): sn = sites(row['SiteID'])
+                results.append((row['Xuhao'], sn, 
+                                datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S'), 
+                                row['VehicheCard'], row['smTotalWeight']/1000,
                                 row['smLimitWeightPercent'], status[row['ReadFlag']],))
         else:
+            print 'fetch cond details'
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
                 if not os.path.isfile(row['smPlatePath'].replace(r'\\', '_')):
@@ -358,13 +368,51 @@ def fetch_cond_recs(cond, interval, brf=True):
 
     return results
 
+def query_detail_by_seq(seq):
+    conn = connectdb()
+    cur = conn.cursor(as_dict=True)
+    cur.execute('SELECT * FROM smHighWayDate WHERE Xuhao=%d', seq)
+    result = [UserDb.Record.TAB_HDR]
+    row = cur.fetchone()
+    conn.close()
+    if not row: return result
+    local_plate_img = row['smPlatePath'].replace(r'\\', '_')
+    remote_plate_img = row['smPlatePath'].replace(r'\\', '/')
+    local_rear_img = row['smImgPath'].replace(r'\\', '_')
+    remote_rear_img = row['smImgPath'].replace(r'\\', '/')
+    if not os.path.isfile(local_plate_img):
+        retr_img_from_ftp(remote_plate_img)
+    if not os.path.isfile(local_rear_img):
+        retr_img_from_ftp(remote_rear_img)
+    proctime = "记录暂未进行任何处理"
+    if row['ProcTime']: proctime = row['ProcTime']
+    sitename = get_site_name(row['SiteID'])
+    timestr = datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S')
+    result.append(
+        (row['Xuhao'], sitename, timestr, 
+         row['VehicheCard'],
+         row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
+         row['smRoadNum'], row['smLimitWeight']/1000, row['smLimitWeightPercent'], proctime,
+         local_plate_img, local_rear_img, 
+         row['ReadFlag'])
+        )
+    return result
+
+
 def get_site_name(siteid):
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
     cur.execute('SELECT * FROM smSites WHERE SiteID=%d', siteid)
     sn = cur.fetchone()
     conn.close()
+    if sn is None: return '站点-%d'%(siteid)
     return sn['SiteName']
+
+def get_site_name_cache(siteid, sites):
+    for site in sites:
+        if siteid == site['SiteName']:
+            return site['SiteID']
+    return '站点-%d'%(siteid,)
 
 def update_read_flag(seq, value):
     conn = connectdb()

@@ -5,7 +5,8 @@
     <div class="container-fluid">
       <div class="row">
       	%include ('./view/bsfiles/view/nav_sidebar.tpl')
-      	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      	<div class="col-xs-9 col-xs-offset-3 col-sm-9 col-sm-offset-3 
+                    col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2 main">
       	  <h3 class="sub-header">黑名单列表</h3>
       	    <table class="table table-striped">
               <thead>

@@ -169,14 +169,28 @@ def send_query_results():
   interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
   print cond
   results = db_man.fetch_cond_recs(cond, interval)
-  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  #details = db_man.fetch_cond_recs(cond, interval, brf=False)
   print db_man.ftpp
   return template('./view/bsfiles/view/vehicle_query.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
-                  results=results,
-                  details=details,
-                  imgpath=db_man.ftpp)
+                  results=results)
+
+@route('/details/<seq>')
+def show_detail(seq):
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  detail = db_man.query_detail_by_seq(int(seq))
+  panel = "panel-info"
+  if detail[1][4] == '1': panel = 'panel-danger'
+  return template('./view/bsfiles/view/rec_detail.tpl', 
+                   custom_hdr=None, panel_type=panel,
+                  detail=detail, length=len(detail[0]))
 
 @route('/proceed')
 def proceed():
@@ -233,12 +247,11 @@ def proceed_query():
   cond = cons_query_where_clause(values)
   interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
   results = db_man.fetch_cond_recs(cond, interval)
-  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  #details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/rec_proceed.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details,
                   imgpath=db_man.ftpp)
 
 @route('/proceed_approval')
@@ -281,12 +294,12 @@ def proc_appr():
   cond = cons_query_where_clause(values)
   interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
   results = db_man.fetch_cond_recs(cond, interval)
-  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  #details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/proc_approval.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details,
+                  #details=details,
                   imgpath=db_man.ftpp)
 
 @route('/approved/<seq>')
@@ -370,12 +383,12 @@ def register():
   cond = cons_query_where_clause(values)
   interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
   results = db_man.fetch_cond_recs(cond, interval)
-  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  #details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/proc_rec.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details,
+                  #details=details,
                   imgpath=db_man.ftpp)
 
 @route('/register/<seq>', method='POST')
@@ -436,12 +449,12 @@ def regappr():
   cond = cons_query_where_clause(values)
   interval = cons_query_interval(map(request.forms.get, ['startdate', 'enddate']))
   results = db_man.fetch_cond_recs(cond, interval)
-  details = db_man.fetch_cond_recs(cond, interval, brf=False)
+  #details = db_man.fetch_cond_recs(cond, interval, brf=False)
   return template('./view/bsfiles/view/reg_approval.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
                   results=results,
-                  details=details,
+                  #details=details,
                   imgpath=db_man.ftpp)
 
 @route('/registered/<seq>')
@@ -782,7 +795,7 @@ def main():
   #websvr = Process(target=run, args=(app, 'wsgiref', '0.0.0.0', '8081'))
   #websvr.start()
   #websvr.join()
-  run(app, host='0.0.0.0', port=8081, Debug=False, reloader=False)
+  run(app, host='0.0.0.0', port=8081, server='cherrypy')
 
 
 if __name__ == '__main__':

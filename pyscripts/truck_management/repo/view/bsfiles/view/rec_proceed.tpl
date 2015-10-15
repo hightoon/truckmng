@@ -5,29 +5,30 @@
     <div class="container-fluid">
       <div class="row">
       	%include ('./view/bsfiles/view/nav_sidebar.tpl')
-      	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      	<div class="col-xs-9 col-xs-offset-3 col-sm-9 col-sm-offset-3 
+                    col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2 main">
       	  <h3 class="sub-header">超限处理</h3>
       	  <table class="table table-responsive">
       	  	<tbody>
 	      	  <form action="/proceed_query" method="POST">
 	      	  	<tr>
 	      	  	  <td>
-		      	  	  <label class="col-sm-4 control-label">开始时间</label>
-		      	  	  <div class="col-sm-6">
+		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">开始时间</label>
+		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="date" class="form-control input-sm" id="startdate" name="startdate" 
 		        	  	placeholder="2015-01-30 15:55:06"/>
 		        	  </div>
 		          </td>
 		          <td>
-		      	  	  <label class="col-sm-4 control-label">结束时间</label>
-		      	  	  <div class="col-sm-6">
+		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">结束时间</label>
+		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="date" class="form-control input-sm" id="enddate" name="enddate" 
 		        	  	placeholder="2015-01-30 15:55:07"/>
 		        	  </div>
 		          </td>
 		          <td>
-		          	<label class="col-sm-4 control-label">违章状态</label>
-		        	<div class="col-sm-6">
+		          	<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">违章状态</label>
+		        	<div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="smState">
 	        			<option value="0">正常</option>
 	        			<option value="1" selected>超限</option>
@@ -38,8 +39,8 @@
 		        </tr>
 		        <tr>
 		          <td>
-		        	  <label class="col-sm-4 control-label">处理状态</label>
-		        	  <div class="col-sm-6">
+		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">处理状态</label>
+		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="ReadFlag" id="ReadFlag">
 	        			<option value="None" selected>未处理</option>
 	        			<option value="1">待审核</option>
@@ -49,8 +50,8 @@
 		        	  </div>
 	        	  </td>
 	        	  <td>
-		        	  <label class="col-sm-4 control-label">站点编号</label>
-		        	  <div class="col-sm-6">
+		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">站点编号</label>
+		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="SiteID" id="siteid">
 		        	  	%for i in xrange(1, 9):
 	        			<option value={{i}}>{{i}}</option>
@@ -60,8 +61,8 @@
 		        	  </div>
 	        	  </td>
 	        	  <td>
-		        	  <label class="col-sm-4 control-label">车轴数</label>
-		        	  <div class="col-sm-6">
+		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">车轴数</label>
+		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="smWheelCount" id="wheels">
 		        	  	%for i in xrange(2, 7):
 	        			<option value="{{i}}">{{i}}</option>
@@ -73,20 +74,20 @@
 	        	</tr>
 	        	<tr>
 	        		<td>
-		        	  <label class="col-sm-4 control-label">车牌号</label>
-		        	  <div class="col-sm-6">
+		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">车牌号</label>
+		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="text" class="form-control input-sm" name="VehicheCard"/>
 		        	  </div>
 	        	  	</td>
 	        	  	<td>
-		        	  <label class="col-sm-4 control-label">超限率</label>
-		        	  <div class="col-sm-6">
+		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">超限率</label>
+		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="text" class="form-control input-sm" name="smLimitWeightPercent"/>
 		        	  </div>
 	        	  	</td>
 	        	  	<td>
-		        	  <label class="col-sm-4 control-label">车重</label>
-		        	  <div class="col-sm-6">
+		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">车重</label>
+		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="text" class="form-control input-sm" name="smTotalWeight"/>
 		        	  </div>
 	        	  	</td>
@@ -111,26 +112,23 @@
 	          	</tr>
 	          </thead>
 	          <tbody>
-	          	%for res in details[1:]:
+	          	%for res in results[1:]:
 	          	  <tr>
-	          	  %for col in res[0]:
+	          	  %for col in res:
 	          	    <td>{{col}}</td>
 	          	  %end
 	          	  <td>
-	          	  	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" 
-	          	  			data-target="#rec-modula-{{res[1][0]}}">
+	          	  	<button type="button" class="btn btn-sm btn-primary" onclick="open_window('/details/{{res[0]}}');">
 	          	  		查看详情
 	          	  	</button>
-	          	  	%if res[1][-1] is None:
+	          	  	%if res[-1] == "未处理":
 	          	  		<button class="btn btn-sm btn-primary" 
-	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[1][0]}}';">
+	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[0]}}';">
 	          	  			申请处理
 	          	  		</button>
 	          	  	%else:
 	          	  		<button>处理中</button>
 	          	  	%end
-	          	  	
-	          	  	%include ('./view/bsfiles/view/query_modula.tpl')
 	          	  </td>
 	          	  </tr>
 	          	%end
