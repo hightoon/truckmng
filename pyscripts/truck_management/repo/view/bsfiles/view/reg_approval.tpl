@@ -72,7 +72,12 @@
 	        	  	<td>
 		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">超限率</label>
 		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
-		        	  	<input type="text" class="form-control input-sm" name="smLimitWeightPercent"/>
+		        	  	<select class="form-control input-sm" name="smLimitWeightPercent" id="smLimitWeightPercent">
+		        	  	%for i in xrange(10, 110, 10):
+	        			<option value="{{i}}">{{i}}</option>
+	        			%end
+	        			<option value="" selected>全部</option>
+		        	  	</select>
 		        	  </div>
 	        	  	</td>
 	        	  	<td>
