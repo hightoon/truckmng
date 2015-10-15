@@ -29,7 +29,14 @@ body {
   border: 0;
   /*background-color: #2C3539;*/
   background-color: #E8A317;
+  padding-top: 35px;
+  padding-bottom: 25px;
   /*background-color: white;*/
+  background-image: url('/static/view/bsfiles/images/header-bg.jpg');
+  background-position: fixed;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  /*background-attachment: fixed;*/
 }
 
 /*
@@ -40,6 +47,7 @@ body {
 .sidebar {
   display: none;
   font-size: 25;
+  margin-top: 60px;
 }
 @media (min-width: 768px) {
   .sidebar {
@@ -117,6 +125,8 @@ th.rotate > div > span {
 
 .main {
   padding: 20px;
+  margin-top: 60px;
+  background-color: #F2F2F2;
 }
 @media (min-width: 768px) {
   .main {
@@ -125,7 +135,7 @@ th.rotate > div > span {
   }
 }
 .main .page-header {
-  margin-top: 0;
+  margin-top: 0px;
 }
 
 
