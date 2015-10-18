@@ -398,6 +398,63 @@ def query_detail_by_seq(seq):
         )
     return result
 
+def query_history_by_plate(plate):
+    conn = connectdb()
+    cur = conn.cursor(as_dict=True)
+    cur.execute('SELECT * FROM smHighWayDate WHERE VehicheCard=%s', plate)
+    result = [('纪录编号', '站点', '时间', '车牌', '超重', '超限率',)]
+    rows = cur.fetchall()
+    cur.execute('SELECT * FROM blacklist WHERE Plate=%s', plate)
+    black = cur.fetchone()
+    conn.close()
+    for row in rows:
+        local_plate_img = row['smPlatePath'].replace(r'\\', '_')
+        remote_plate_img = row['smPlatePath'].replace(r'\\', '/')
+        local_rear_img = row['smImgPath'].replace(r'\\', '_')
+        remote_rear_img = row['smImgPath'].replace(r'\\', '/')
+        if not os.path.isfile(local_plate_img):
+            retr_img_from_ftp(remote_plate_img)
+        if not os.path.isfile(local_rear_img):
+            retr_img_from_ftp(remote_rear_img)
+        sitename = get_site_name(row['SiteID'])
+        timestr = datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S')
+        result.append(
+            (row['RecordID'], sitename, timestr, 
+             row['VehicheCard'],
+             row['smState'], row['smLimitWeightPercent'], row['Xuhao'],
+             local_plate_img, local_rear_img, 
+             row['ReadFlag'])
+            )
+    return (black is not None, result)
+
+def stat_today(day):
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM smSites')
+    sites = cur.fetchall()
+    sites = dict(sites)
+    cur.close()
+    cur = conn.cursor(as_dict=True)
+    #startt = datetime.strftime(datetime.now(), '%Y-%m-%d') + ' 00:00:00'
+    #endt = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+    startt = day + ' 00:00:00'
+    endt = day + ' 23:59:59'
+    timestr = " smTime between \'%s\' and \'%s\'"%(startt, endt)
+    cur.execute('SELECT * FROM smHighWayDate WHERE ' + timestr + ' AND smState=%s', '1')
+    rows = cur.fetchall()
+    conn.close()
+    # 24 hours results
+    results = []
+    for i in xrange(24): results.append({})
+    for row in rows:
+        try: sn = sites[row['SiteID']]
+        except: sn = '站点%d'%(row['SiteID'])
+        hour = row['smTime'].hour
+        if results[hour].has_key(sn): results[hour][sn] += 1
+        else: results[hour][sn] = 1
+        for res in results:
+            if not res.has_key(sn): res[sn] = 0
+    return results
 
 def get_site_name(siteid):
     conn = connectdb()
@@ -487,6 +544,7 @@ def confirm_blacklist_state(seq):
         update_blacklist_state(seq, UserDb.BlackList.APPROVED)
     elif state == UserDb.BlackList.DELETING:
         del_blacklist(seq)
+
 
 def test_main():
     conn = connectdb()

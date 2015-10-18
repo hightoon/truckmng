@@ -8,7 +8,7 @@
 
 import sys
 
-import time, urllib2, sqlite3, re, socket, os
+import time, urllib2, sqlite3, re, socket, os, json
 #import time, urllib2, sqlite3
 #import SqlCmdHelper
 from datetime import datetime
@@ -123,10 +123,24 @@ def page_index():
     privs = UserDb.get_privilege(UserDb.get(act_user).role)
   except:
     redirect('/login')
+  results = db_man.stat_today('2015-06-25')
+  teststat = [
+    {"h": "00:00", "a":"100", "b":"101", "c":"102"},
+  ]
+  sites = list(results[0].keys())
+  numofsite = len(sites)
+  stat = []
+  for res in results:
+    temp = []
+    for site in sites:
+      temp.append(res[site])
+    stat += temp
+  print numofsite, sites, stat
   return template('./view/bsfiles/view/dashboard.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, query_results='./view/bsfiles/view/query_rslts.tpl',
                   results=db_man.fetch_all_bad_brf(30),
+                  stat=json.dumps(stat), sites="站点1", numofsite=numofsite,
                   privs=privs)
 
 @route('/query')
@@ -188,9 +202,12 @@ def show_detail(seq):
   detail = db_man.query_detail_by_seq(int(seq))
   panel = "panel-info"
   if detail[1][4] == '1': panel = 'panel-danger'
+  isblack, history_recs = db_man.query_history_by_plate(detail[-1][3])
+  print isblack, history_recs
   return template('./view/bsfiles/view/rec_detail.tpl', 
                    custom_hdr=None, panel_type=panel,
-                  detail=detail, length=len(detail[0]))
+                  detail=detail, length=len(detail[0]),
+                  isblack=isblack, history_recs=history_recs)
 
 @route('/proceed')
 def proceed():
@@ -796,6 +813,7 @@ def main():
   #websvr.start()
   #websvr.join()
   run(app, host='0.0.0.0', port=8081, server='cherrypy')
+  #run(app, host='0.0.0.0', port=8081)
 
 
 if __name__ == '__main__':

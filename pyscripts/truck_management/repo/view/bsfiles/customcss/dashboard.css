@@ -46,7 +46,7 @@ body {
 /* Hide for mobile, show later */
 .sidebar {
   display: none;
-  font-size: 25;
+  /*font-size: 25;*/
   margin-top: 60px;
 }
 @media (min-width: 768px) {
@@ -60,7 +60,8 @@ body {
     padding: 20px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    background-color: #15317E;
+    /*background-color: #15317E;*/
+    background-color: #084B8A;
     color: yellow;
     border-right: 1px solid #eee;
   }
@@ -80,12 +81,14 @@ body {
   font-size: 18px;
   font-weight: 700;
   margin-left: 30px;
+  /*font-family: BiaoKai;*/
 }
 
 .nav-sidebar > li > span > a, .nav-sidebar > li > span {
   color: yellow;
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 900;
+  /*font-family: BiaoKai;*/
 }
 
 /*.nav-sidebar > .active > li > a > span,

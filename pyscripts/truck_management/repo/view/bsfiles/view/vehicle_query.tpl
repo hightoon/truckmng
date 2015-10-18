@@ -23,7 +23,7 @@
 		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">结束时间</label>
 		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="text" class="form-control input-sm" id="enddate" name="enddate" 
-		        	  	placeholder="2015-01-30 15:55:07"/>
+		        	  	placeholder="2015-01-30 15:55:06"/>
 		        	  </div>
 		          </td>
 	      	  	  <td>
@@ -144,5 +144,6 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/static/view/bsfiles/js/jquery.min.js"></script>
     <script src="/static/view/bsfiles/js/bootstrap.min.js"></script>
+    <!--script src="/static/view/bsfiles/js/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script-->
 
 %include ('./view/bsfiles/view/html_footer.tpl')
