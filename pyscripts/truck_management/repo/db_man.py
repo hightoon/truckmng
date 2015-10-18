@@ -427,7 +427,7 @@ def query_history_by_plate(plate):
             )
     return (black is not None, result)
 
-def stat_today(day):
+def period_stat(p, percent=False, siteid=None):
     conn = connectdb()
     cur = conn.cursor()
     cur.execute('SELECT * FROM smSites')
@@ -437,12 +437,17 @@ def stat_today(day):
     cur = conn.cursor(as_dict=True)
     #startt = datetime.strftime(datetime.now(), '%Y-%m-%d') + ' 00:00:00'
     #endt = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
-    startt = day + ' 00:00:00'
-    endt = day + ' 23:59:59'
+    where_str = ' AND smState=%s'
+    where_val = ['1']
+    if siteid:
+        where_str += ' AND SiteID=%d'
+        where_val.append(siteid)
+
+    startt, endt = p
     timestr = " smTime between \'%s\' and \'%s\'"%(startt, endt)
-    cur.execute('SELECT * FROM smHighWayDate WHERE ' + timestr + ' AND smState=%s', '1')
+    cur.execute('SELECT * FROM smHighWayDate WHERE ' + timestr + where_str, tuple(where_val))
     rows = cur.fetchall()
-    conn.close()
+
     # 24 hours results
     results = []
     for i in xrange(24): results.append({})
@@ -454,6 +459,27 @@ def stat_today(day):
         else: results[hour][sn] = 1
         for res in results:
             if not res.has_key(sn): res[sn] = 0
+
+    percent_results = {}
+    if percent:
+        percent_ranges = ['smLimitWeightPercent=0', 'smLimitWeightPercent>0 and smLimitWeightPercent<20', 
+                          'smLimitWeightPercent>=20 and smLimitWeightPercent<50', 
+                          'smLimitWeightPercent>=50 and smLimitWeightPercent<100',
+                          'smLimitWeightPercent>=100']
+        numofrange = len(percent_ranges)
+        for pr in range(numofrange):
+            cur.execute('SELECT * FROM smHighWayDate WHERE ' + timestr + ' AND ' + percent_ranges[pr] + where_str, tuple(where_val))
+            recs = cur.fetchall()
+            for rec in recs:
+                try: sn = sites[row['SiteID']]
+                except: sn = '站点%d'%(row['SiteID'])
+                if percent_results.has_key(sn): percent_results[sn][pr] += 1
+                else: 
+                    percent_results[sn] = [0]*numofrange
+                    percent_results[sn][pr] += 1
+
+    conn.close()
+    if percent: return results, percent_results
     return results
 
 def get_site_name(siteid):
@@ -470,6 +496,17 @@ def get_site_name_cache(siteid, sites):
         if siteid == site['SiteName']:
             return site['SiteID']
     return '站点-%d'%(siteid,)
+
+def get_site_ids():
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute("SELECT SiteID FROM smSites")
+    rows = cur.fetchall()
+    if not rows:
+        cur.execute("SELECT SiteID FROM smHighWayDate")
+    rows = cur.fetchall()
+    conn.close()
+    return list(set([row[0] for row in rows]))
 
 def update_read_flag(seq, value):
     conn = connectdb()

@@ -123,24 +123,59 @@ def page_index():
     privs = UserDb.get_privilege(UserDb.get(act_user).role)
   except:
     redirect('/login')
-  results = db_man.stat_today('2015-06-25')
-  teststat = [
-    {"h": "00:00", "a":"100", "b":"101", "c":"102"},
-  ]
+  today = datetime.strftime(datetime.now(), '%Y-%m-%d')
+  startt = today + ' 00:00:00'
+  endt = today + ' 23:59:59'
+  results = db_man.period_stat((startt, endt))
   sites = list(results[0].keys())
   numofsite = len(sites)
-  stat = []
-  for res in results:
-    temp = []
-    for site in sites:
-      temp.append(res[site])
-    stat += temp
-  print numofsite, '|'.join(sites), stat
+  # following code for javascript, obsolete now
+  #stat = []
+  #for res in results:
+  #  temp = []
+  #  for site in sites:
+  #    temp.append(res[site])
+  #  stat += temp
+  #print numofsite, '|'.join(sites), stat
   return template('./view/bsfiles/view/dashboard.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, query_results='./view/bsfiles/view/query_rslts.tpl',
-                  results=db_man.fetch_all_bad_brf(30),
-                  stat=json.dumps(stat), sites='|'.join(sites), numofsite=numofsite,
+                  #results=db_man.fetch_all_bad_brf(30),
+                  #stat=json.dumps(stat), sites='|'.join(sites), 
+                  numofsite=numofsite, sites=sites, stat=results,
+                  siteids=db_man.get_site_ids(), period=today,
+                  privs=privs)
+
+@route('/statdata', method='POST')
+def stat():
+  act_user = get_act_user()
+  if act_user is None:
+    redirect('/')
+  try:
+    privs = UserDb.get_privilege(UserDb.get(act_user).role)
+  except:
+    redirect('/login')
+  siteid = request.forms.get('SiteID')
+  startt = request.forms.get('startdate')
+  endt = request.forms.get('enddate')
+  period = '%s~%s'%(startt, endt)
+  if startt and endt:
+    startt = startt + ' 00:00:00'
+    endt = endt + ' 23:59:59'
+  else:
+    today = datetime.strftime(datetime.now(), '%Y-%m-%d')
+    startt = today + ' 00:00:00'
+    endt = today + ' 23:59:59'
+    period = today
+  results, percent_results = db_man.period_stat((startt, endt), siteid=siteid, percent=True)
+  sites = list(results[0].keys())
+  numofsite = len(sites)
+
+  return template('./view/bsfiles/view/dashboard.tpl',
+                  custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
+                  user=act_user, query_results='./view/bsfiles/view/query_rslts.tpl',
+                  numofsite=numofsite, sites=sites, stat=results,
+                  siteids=db_man.get_site_ids(), period=period, percent=percent_results,
                   privs=privs)
 
 @route('/query')
@@ -237,7 +272,7 @@ def proceed(seq):
     db_man.update_read_flag(int(seq), UserDb.ProceedState.APPROVING)
   except:
     return '更新失败！纪录不存在！%s'%(seq,)
-  redirect('/proceed')
+  #redirect('/proceed')
 
 @route('/proceed_query', method='POST')
 def proceed_query():
@@ -332,7 +367,7 @@ def approved(seq):
     db_man.update_read_flag(int(seq), UserDb.ProceedState.APPROVED)
   except:
     return '更新失败！纪录不存在！%s'%(seq,)
-  redirect('/proceed_approval')
+  #redirect('/proceed_approval')
 
 @route('/disapproved/<seq>')
 def approved(seq):
@@ -424,7 +459,7 @@ def register(seq):
     if ts: db_man.update_regtime(int(seq), ts)
   except:
     return '更新失败！纪录不存在！%s'%(seq,)
-  redirect('/register')
+  #redirect('/register')
 
 @route('/reg_approval')
 def regappr():
