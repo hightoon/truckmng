@@ -7,7 +7,47 @@
         %include ('./view/bsfiles/view/nav_sidebar.tpl')
         <div class="col-xs-8 col-xs-offset-4 col-sm-8 col-sm-offset-4 
                     col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2 main">
-          <h2 class="page-header">数据概要</h2>
+          <h3 class="page-header">数据统计</h3>
+          <table class="table table-striped">
+            <tbody>
+            <form action="/statdata" method="POST">
+              <tr>
+                <td>
+                  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">开始时间</label>
+                  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
+                  <input type="text" class="form-control input-sm" id="startdate" name="startdate" 
+                  placeholder="2015-01-30 15:55:06"/>
+                  </div>
+                </td>
+                <td>
+                  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">结束时间</label>
+                  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
+                  <input type="text" class="form-control input-sm" id="enddate" name="enddate" 
+                  placeholder="2015-01-30 15:55:06"/>
+                  </div>
+                </td>
+                <td>
+                  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">站点</label>
+                  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
+                  <select class="form-control input-sm" name="SiteID" id="siteid">
+                  %for id in siteids:
+                    <option value={{id}}>{{id}}</option>
+                  %end
+                  <option value="" selected>全部</option>
+                  </select>
+                  </div>
+                </td>
+            </tr>
+            <tr>
+              <td>
+                <button type="submit" class="btn btn-md btn-primary" name="query" value="show">
+                  查询
+                </button>
+              </td>
+            </tr>
+          </form>
+          </tbody>
+        </table>
 
           <!--div class="row placeholders placeholder">
             <div class="col-xs-3 col-sm-3 placeholder">
@@ -35,17 +75,15 @@
               </button>
             </div>
           </div-->
-
           %if query_results:
             %include (query_results)
           %end
-          <div class="panel panel-danger">
-          <!-- Default panel contents -->
+          <!--div class="panel panel-info">
             <div class="panel-heading">站点今日各时段违章</div>
               <div class="panel-body">
                 <div id="line-stat"></div>
               </div>
-          </div>
+          </div-->
         </div>
       </div>
     </div>
@@ -59,10 +97,10 @@
     <!--script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
     <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script-->
-    <script src="/static/view/bsfiles/js/raphael-min.js"></script>
+    <!--script src="/static/view/bsfiles/js/JSON-js-master/json2.js"></script-->
+    <!--script src="/static/view/bsfiles/js/raphael-min.js"></script>
     <script src="/static/view/bsfiles/js/jquery-1.8.2.min.js"></script>
     <script src="/static/view/bsfiles/js/morris-0.4.1.min.js"></script>
-    <!--script src="/static/view/bsfiles/js/JSON-js-master/json2.js"></script-->
     <script type="text/javascript">
       var numofsite = {{numofsite}};
       var sites = "{{sites}}".split('|');
@@ -82,7 +120,7 @@
         xkey: 'h',
         ykeys: sites,
         labels: sites});
-    </script>
+    </script-->
     <script src="/static/view/bsfiles/js/jquery.min.js"></script>
     <script src="/static/view/bsfiles/js/bootstrap.min.js"></script>
 

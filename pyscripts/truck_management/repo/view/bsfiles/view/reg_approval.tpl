@@ -118,7 +118,9 @@
 	          	  	</button>
 	          	  	%if res[-1] == "处理已登记":
 	          	  		<button class="btn btn-sm btn-primary" 
-	          	  				onclick="alert('登记已审核!');location.href='/registered/{{res[0]}}';">
+	          	  				onclick="alert('登记已审核!');
+	          	  				httpGetAsync('/registered/{{res[0]}}', console.log);
+	          	  				location.reload();">
 	          	  			登记审核通过
 	          	  		</button>
 	          	  	%end

@@ -127,8 +127,13 @@
 	          	  		查看详情
 	          	  	</button>
 	          	  	%if res[-1] == "未处理":
+	          	  		<!--button class="btn btn-sm btn-primary" 
+	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[0]}}';"-->
 	          	  		<button class="btn btn-sm btn-primary" 
-	          	  				onclick="alert('处理申请已提交!请等待审核!');location.href='/proceed/{{res[0]}}';">
+	          	  				onclick=
+	          	  				"alert('处理申请已提交!请等待审核!');
+	          	  				 httpGetAsync('/proceed/{{res[0]}}', console.log);
+	          	  				 location.reload();">		
 	          	  			申请处理
 	          	  		</button>
 	          	  	%else:
