@@ -15,14 +15,14 @@
 	      	  	  <td>
 		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">开始时间</label>
 		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
-		        	  	<input type="date" class="form-control input-sm" id="startdate" name="startdate" 
+		        	  	<input type="text" class="form-control input-sm" id="startdate" name="startdate" 
 		        	  	placeholder="2015-01-30"/>
 		        	  </div>
 		          </td>
 		          <td>
 		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">结束时间</label>
 		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
-		        	  	<input type="date" class="form-control input-sm" id="enddate" name="enddate" 
+		        	  	<input type="text" class="form-control input-sm" id="enddate" name="enddate" 
 		        	  	placeholder="2015-01-30"/>
 		        	  </div>
 		          </td>

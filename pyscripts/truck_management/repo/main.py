@@ -135,12 +135,12 @@ def page_index():
     for site in sites:
       temp.append(res[site])
     stat += temp
-  print numofsite, sites, stat
+  print numofsite, '|'.join(sites), stat
   return template('./view/bsfiles/view/dashboard.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, query_results='./view/bsfiles/view/query_rslts.tpl',
                   results=db_man.fetch_all_bad_brf(30),
-                  stat=json.dumps(stat), sites="站点1", numofsite=numofsite,
+                  stat=json.dumps(stat), sites='|'.join(sites), numofsite=numofsite,
                   privs=privs)
 
 @route('/query')
