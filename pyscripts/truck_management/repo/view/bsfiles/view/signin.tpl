@@ -13,7 +13,7 @@
             <input type="checkbox" name="rememberme" value="remember-me"> 记住我
           </label>
         </div>
-        <button class="btn btn-xs btn-primary" type="submit">登录</button>
+        <button class="btn btn-sm btn-primary" type="submit">登录</button>
       </form>
       <!--span class="compinfo">Powered By Sifang</span><br>
       <span class="verinfo">版本: 0.0.1</span-->
