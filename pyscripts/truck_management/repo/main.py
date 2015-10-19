@@ -249,7 +249,7 @@ def show_detail(seq):
     privs = UserDb.get_privilege(UserDb.get(act_user).role)
   except:
     redirect('/login')
-  global imgpath
+  imgpath = ''
   agent = request.environ.get('HTTP_USER_AGENT')
   browser = httpagentparser.simple_detect(agent)[1]
   if 'Microsoft' in browser:
@@ -335,8 +335,7 @@ def proceed_query():
                   enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
                   smState=request.forms.get('smState'), smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
-                  smWheelCount=request.forms.get('smWheelCount'),
-                  imgpath=imgpath)
+                  smWheelCount=request.forms.get('smWheelCount'))
 
 @route('/proceed_approval')
 def proc_appr():
@@ -390,9 +389,7 @@ def proc_appr():
                   enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
                   smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
-                  smWheelCount=request.forms.get('smWheelCount'),
-                  #details=details,
-                  imgpath=imgpath)
+                  smWheelCount=request.forms.get('smWheelCount'))
 
 @route('/approved/<seq>')
 def approved(seq):
@@ -487,9 +484,7 @@ def register():
                   enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
                   smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
-                  smWheelCount=request.forms.get('smWheelCount'),
-                  #details=details,
-                  imgpath=imgpath)
+                  smWheelCount=request.forms.get('smWheelCount'))
 
 @route('/register/<seq>', method='POST')
 def register(seq):
@@ -561,9 +556,7 @@ def regappr():
                   enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
                   smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
-                  smWheelCount=request.forms.get('smWheelCount'),
-                  #details=details,
-                  imgpath=imgpath)
+                  smWheelCount=request.forms.get('smWheelCount'))
 
 @route('/registered/<seq>')
 def regappr(seq):

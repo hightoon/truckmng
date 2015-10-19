@@ -4,4 +4,4 @@ user WeightDataService
 pass 660328
 dbnm sifang
 ftpp ftp://WeightDataService:660328@172.16.33.3/
-fpth file://172.16.33.3/xxx
+fpth file://172.16.33.3/xxx/
