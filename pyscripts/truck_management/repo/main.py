@@ -8,7 +8,7 @@
 
 import sys
 
-import time, urllib2, sqlite3, re, socket, os, json
+import time, urllib2, sqlite3, re, socket, os, json, httpagentparser
 #import time, urllib2, sqlite3
 #import SqlCmdHelper
 from datetime import datetime
@@ -26,7 +26,6 @@ import decimal
 import UserDb
 import db_man
 
-
 session_opts = {
     'session.type': 'file',
     'session.cookie_expires': 3600,
@@ -43,6 +42,12 @@ def get_act_user():
     return request.session['logged_in']
   else:
     return None
+
+def set_browser(browser):
+  request.session['browser_type'] = browser
+
+def get_browser():
+  return request.session['browser_type']
 
 def cons_query_where_clause(query_mapping):
   #conds = ['=:'.join([col, col]) for col in query_mapping.keys()]
@@ -244,15 +249,24 @@ def show_detail(seq):
     privs = UserDb.get_privilege(UserDb.get(act_user).role)
   except:
     redirect('/login')
+  global imgpath
+  agent = request.environ.get('HTTP_USER_AGENT')
+  browser = httpagentparser.simple_detect(agent)[1]
+  if 'Microsoft' in browser:
+    imgpath = db_man.fpth
+  else:
+    imgpath = db_man.ftpp
+  print imgpath
   detail = db_man.query_detail_by_seq(int(seq))
   panel = "panel-info"
   if detail[1][4] == '1': panel = 'panel-danger'
   isblack, history_recs = db_man.query_history_by_plate(detail[-1][3])
-  print isblack, history_recs
+  print isblack, history_recs, imgpath
   return template('./view/bsfiles/view/rec_detail.tpl', 
                    custom_hdr=None, panel_type=panel,
                   detail=detail, length=len(detail[0]),
-                  isblack=isblack, history_recs=history_recs)
+                  isblack=isblack, history_recs=history_recs, 
+                  imgpath=imgpath)
 
 @route('/proceed')
 def proceed():
@@ -322,7 +336,7 @@ def proceed_query():
                   smState=request.forms.get('smState'), smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
                   smWheelCount=request.forms.get('smWheelCount'),
-                  imgpath=db_man.ftpp)
+                  imgpath=imgpath)
 
 @route('/proceed_approval')
 def proc_appr():
@@ -378,7 +392,7 @@ def proc_appr():
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
                   smWheelCount=request.forms.get('smWheelCount'),
                   #details=details,
-                  imgpath=db_man.ftpp)
+                  imgpath=imgpath)
 
 @route('/approved/<seq>')
 def approved(seq):
@@ -475,7 +489,7 @@ def register():
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
                   smWheelCount=request.forms.get('smWheelCount'),
                   #details=details,
-                  imgpath='')
+                  imgpath=imgpath)
 
 @route('/register/<seq>', method='POST')
 def register(seq):
@@ -549,7 +563,7 @@ def regappr():
                   VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
                   smWheelCount=request.forms.get('smWheelCount'),
                   #details=details,
-                  imgpath=db_man.ftpp)
+                  imgpath=imgpath)
 
 @route('/registered/<seq>')
 def regappr(seq):

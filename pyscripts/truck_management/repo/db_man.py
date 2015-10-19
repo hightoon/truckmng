@@ -11,12 +11,13 @@ from ftplib import FTP
     odbc db manipulation
 """
 
-host = None
-inst = None
-user = None
-pswd = None
-dbnm = None
-ftpp = None
+host = ''
+inst = ''
+user = ''
+pswd = ''
+dbnm = ''
+ftpp = ''
+fpth = ''
 
 tabname2sqlcmd = {
     'LimitW': 0,
@@ -144,7 +145,7 @@ def retr_img_from_ftp(filename):
     return ret
 
 def get_param():
-    global host, inst, user, pswd, dbnm, ftpp
+    global host, inst, user, pswd, dbnm, ftpp, fpth
     with open('conf.txt', 'rb') as conf:
         for ln in conf:
             param = ln.split()
@@ -154,6 +155,7 @@ def get_param():
             elif param[0] == 'pass': pswd = param[1]
             elif param[0] == 'dbnm': dbnm = param[1]
             elif param[0] == 'ftpp': ftpp = param[1]
+            elif param[0] == 'fpth': fpth = param[1]
             else: pass
 
 def exec_sql_file(cur, f):
@@ -171,8 +173,8 @@ def exec_sql_file(cur, f):
 
 
 def connectdb():
-    #conn = pymssql.connect('%s'%(host,), '%s'%(user,), pswd, dbnm, charset='utf8')
-    conn = pymssql.connect('192.168.0.6\SQLEXPRESS', '.\\haitong', '111111', 'ssss', charset='utf8')
+    conn = pymssql.connect('%s'%(host,), '%s'%(user,), pswd, dbnm, charset='utf8')
+    #conn = pymssql.connect('192.168.0.6\SQLEXPRESS', '.\\haitong', '111111', 'ssss', charset='utf8')
     #conn = pymssql.connect('10.140.163.132\SQLEXPRESS', '.\\quentin', '111111', 'ssss', charset='utf8')
     conn.autocommit(True)
     return conn
@@ -344,10 +346,10 @@ def fetch_cond_recs(cond, interval, brf=True):
             print 'fetch cond details'
             results = [UserDb.Record.TAB_HDR]
             for row in rows:
-                if not os.path.isfile(row['smPlatePath'].replace(r'\\', '_')):
-                    retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
-                if not os.path.isfile(row['smImgPath'].replace(r'\\', '_')):
-                    retr_img_from_ftp(row['smImgPath'].replace(r'\\', '/'))
+                #if not os.path.isfile(row['smPlatePath'].replace(r'\\', '_')):
+                #    retr_img_from_ftp(row['smPlatePath'].replace(r'\\', '/'))
+                #if not os.path.isfile(row['smImgPath'].replace(r'\\', '_')):
+                #    retr_img_from_ftp(row['smImgPath'].replace(r'\\', '/'))
                 proctime = "记录暂未进行任何处理"
                 if row['ProcTime']: proctime = row['ProcTime']
                 results.append(
@@ -359,7 +361,7 @@ def fetch_cond_recs(cond, interval, brf=True):
                                  row['VehicheCard'],
                                  row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
                                  row['smRoadNum'], row['smLimitWeight']/1000, row['smLimitWeightPercent'], proctime,
-                                 row['smPlatePath'].replace(r'\\', '_'), row['smImgPath'].replace(r'\\', '_'), 
+                                 row['smPlatePath'].replace(r'\\', '/'), row['smImgPath'].replace(r'\\', '/'), 
                                  row['ReadFlag'])
                               )
                             )
@@ -380,10 +382,10 @@ def query_detail_by_seq(seq):
     remote_plate_img = row['smPlatePath'].replace(r'\\', '/')
     local_rear_img = row['smImgPath'].replace(r'\\', '_')
     remote_rear_img = row['smImgPath'].replace(r'\\', '/')
-    if not os.path.isfile(local_plate_img):
-        retr_img_from_ftp(remote_plate_img)
-    if not os.path.isfile(local_rear_img):
-        retr_img_from_ftp(remote_rear_img)
+    #if not os.path.isfile(local_plate_img):
+    #    retr_img_from_ftp(remote_plate_img)
+    #if not os.path.isfile(local_rear_img):
+    #    retr_img_from_ftp(remote_rear_img)
     proctime = "记录暂未进行任何处理"
     if row['ProcTime']: proctime = row['ProcTime']
     sitename = get_site_name(row['SiteID'])
@@ -393,14 +395,14 @@ def query_detail_by_seq(seq):
          row['VehicheCard'],
          row['smState'], row['smWheelCount'], row['smSpeed'], row['smTotalWeight']/1000,
          row['smRoadNum'], row['smLimitWeight']/1000, row['smLimitWeightPercent'], proctime,
-         local_plate_img, local_rear_img, 
+         remote_plate_img, remote_rear_img, 
          row['ReadFlag'])
         )
     return result
 
 def query_history_by_plate(plate):
     "get record belongs to plate in the past 90 days"
-    if plate == u"无车牌": return False, []
+    if plate == u"无车牌": return False, [('纪录编号', '站点', '时间', '车牌', '超重', '超限率',)]
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
     startt = datetime.strftime(date.today() - timedelta(days=90), '%Y-%m-%d') + ' 00:00:00'
@@ -417,17 +419,17 @@ def query_history_by_plate(plate):
         remote_plate_img = row['smPlatePath'].replace(r'\\', '/')
         local_rear_img = row['smImgPath'].replace(r'\\', '_')
         remote_rear_img = row['smImgPath'].replace(r'\\', '/')
-        if not os.path.isfile(local_plate_img):
-            retr_img_from_ftp(remote_plate_img)
-        if not os.path.isfile(local_rear_img):
-            retr_img_from_ftp(remote_rear_img)
+        #if not os.path.isfile(local_plate_img):
+        #    retr_img_from_ftp(remote_plate_img)
+        #if not os.path.isfile(local_rear_img):
+        #    retr_img_from_ftp(remote_rear_img)
         sitename = get_site_name(row['SiteID'])
         timestr = datetime.strftime(row['smTime'], '%Y-%m-%d %H:%M:%S')
         result.append(
             (row['RecordID'], sitename, timestr, 
              row['VehicheCard'],
              row['smState'], row['smLimitWeightPercent'], row['Xuhao'],
-             local_plate_img, local_rear_img, 
+             remote_plate_img, remote_rear_img, 
              row['ReadFlag'])
             )
     return (black is not None, result)

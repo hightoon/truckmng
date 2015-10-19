@@ -28,17 +28,13 @@
 	<tr>
 	    <td>
 	    	<label>车头照片:&nbsp</label>
-	    	<a href="/static/{{detail[1][-3]}}" class="thumbnail">
-  				<img src="/static/{{detail[1][-3]}}" alt="车头">
-			</a>
+  			<img src="{{imgpath}}{{detail[1][-3]}}" alt="{{imgpath}}{{detail[1][-3]}}">
 	    </td>
 	</tr>
 	<tr>
 	    <td>
 	    	<label>车尾照片:&nbsp</label>
-	    	<a href="/static/{{detail[1][-2]}}" class="thumbnail">
-  				<img src="/static/{{detail[1][-2]}}" alt="车尾">
-			</a>
+  			<img src="{{imgpath}}{{detail[1][-2]}}" alt="{{imgpath}}{{detail[1][-2]}}">
 	    </td>
 	<tr>
   </table>
@@ -66,8 +62,8 @@
 		    	<td>{{rec[i]}}</td>
 		    %end
   		%end
-  		<td><a href="/static/{{rec[-3]}}">点击查看</a></td>
-  		<td><a href="/static/{{rec[-2]}}">点击查看</a></td>
+  		<td><a href="{{imgpath}}{{rec[-3]}}">点击查看</a></td>
+  		<td><a href="{{imgpath}}{{rec[-2]}}">点击查看</a></td>
   		</tr>
   	%end
   </table>
