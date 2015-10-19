@@ -4,7 +4,7 @@
 import os
 import pymssql
 import UserDb
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from ftplib import FTP
 
 """
@@ -399,9 +399,14 @@ def query_detail_by_seq(seq):
     return result
 
 def query_history_by_plate(plate):
+    "get record belongs to plate in the past 90 days"
+    if plate == u"无车牌": return False, []
     conn = connectdb()
     cur = conn.cursor(as_dict=True)
-    cur.execute('SELECT * FROM smHighWayDate WHERE VehicheCard=%s', plate)
+    startt = datetime.strftime(date.today() - timedelta(days=90), '%Y-%m-%d') + ' 00:00:00'
+    endt = datetime.strftime(date.today(), '%Y-%m-%d') + ' 23:59:59'
+    pstr = " AND smTime between \'%s\' and \'%s\'"%(startt, endt)
+    cur.execute('SELECT * FROM smHighWayDate WHERE VehicheCard=%s'+pstr, plate)
     result = [('纪录编号', '站点', '时间', '车牌', '超重', '超限率',)]
     rows = cur.fetchall()
     cur.execute('SELECT * FROM blacklist WHERE Plate=%s', plate)

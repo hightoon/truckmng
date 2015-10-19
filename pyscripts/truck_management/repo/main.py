@@ -144,6 +144,7 @@ def page_index():
                   #stat=json.dumps(stat), sites='|'.join(sites), 
                   numofsite=numofsite, sites=sites, stat=results,
                   siteids=db_man.get_site_ids(), period=today,
+                  startdate="2015-06-25", enddate="2015-06-25", siteid=1,
                   privs=privs)
 
 @route('/statdata', method='POST')
@@ -156,12 +157,13 @@ def stat():
   except:
     redirect('/login')
   siteid = request.forms.get('SiteID')
-  startt = request.forms.get('startdate')
-  endt = request.forms.get('enddate')
-  period = '%s~%s'%(startt, endt)
-  if startt and endt:
-    startt = startt + ' 00:00:00'
-    endt = endt + ' 23:59:59'
+  startdate = request.forms.get('startdate')
+  enddate = request.forms.get('enddate')
+  period = ''
+  if startdate and enddate:
+    startt = startdate + ' 00:00:00'
+    endt = enddate + ' 23:59:59'
+    period = '%s~%s'%(startdate, enddate)
   else:
     today = datetime.strftime(datetime.now(), '%Y-%m-%d')
     startt = today + ' 00:00:00'
@@ -176,6 +178,7 @@ def stat():
                   user=act_user, query_results='./view/bsfiles/view/query_rslts.tpl',
                   numofsite=numofsite, sites=sites, stat=results,
                   siteids=db_man.get_site_ids(), period=period, percent=percent_results,
+                  startdate=startdate, enddate=enddate, siteid=siteid, 
                   privs=privs)
 
 @route('/query')
@@ -189,7 +192,11 @@ def query():
     redirect('/login')
   return template('./view/bsfiles/view/vehicle_query.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user,
+                  user=act_user, startdate='2015-06-25',
+                  enddate='2015-06-25', ReadFlag="",
+                  smState="", smLimitWeightPercent="",
+                  VehicheCard="", smTotalWeight="",
+                  smWheelCount="",
                   privs=privs, results=None)
 
 @route('/query', method="POST")
@@ -219,10 +226,13 @@ def send_query_results():
   print cond
   results = db_man.fetch_cond_recs(cond, interval)
   #details = db_man.fetch_cond_recs(cond, interval, brf=False)
-  print db_man.ftpp
   return template('./view/bsfiles/view/vehicle_query.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user, privs=privs,
+                  user=act_user, privs=privs, startdate=request.forms.get('startdate'),
+                  enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
+                  smState=request.forms.get('smState'), smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
+                  VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
+                  smWheelCount=request.forms.get('smWheelCount'),
                   results=results)
 
 @route('/details/<seq>')
@@ -256,7 +266,11 @@ def proceed():
 
   return template('./view/bsfiles/view/rec_proceed.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user,
+                  user=act_user, startdate='2015-06-25',
+                  enddate='2015-06-25', ReadFlag="",
+                  smState="", smLimitWeightPercent="",
+                  VehicheCard="", smTotalWeight="",
+                  smWheelCount="",
                   privs=privs, results=None)
 
 @route('/proceed/<seq>')
@@ -303,7 +317,11 @@ def proceed_query():
   return template('./view/bsfiles/view/rec_proceed.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
-                  results=results,
+                  results=results, startdate=request.forms.get('startdate'),
+                  enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
+                  smState=request.forms.get('smState'), smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
+                  VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
+                  smWheelCount=request.forms.get('smWheelCount'),
                   imgpath=db_man.ftpp)
 
 @route('/proceed_approval')
@@ -318,7 +336,11 @@ def proc_appr():
 
   return template('./view/bsfiles/view/proc_approval.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user,
+                  user=act_user, startdate='2015-06-25',
+                  enddate='2015-06-25', ReadFlag="",
+                  smLimitWeightPercent="",
+                  VehicheCard="", smTotalWeight="",
+                  smWheelCount="",
                   privs=privs, results=None)
 
 @route('/proceed_approval', method='POST')
@@ -350,7 +372,11 @@ def proc_appr():
   return template('./view/bsfiles/view/proc_approval.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
-                  results=results,
+                  results=results, startdate=request.forms.get('startdate'),
+                  enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
+                  smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
+                  VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
+                  smWheelCount=request.forms.get('smWheelCount'),
                   #details=details,
                   imgpath=db_man.ftpp)
 
@@ -407,7 +433,11 @@ def register():
 
   return template('./view/bsfiles/view/proc_rec.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user,
+                  user=act_user, startdate='2015-06-25',
+                  enddate='2015-06-25', ReadFlag="",
+                  smLimitWeightPercent="",
+                  VehicheCard="", smTotalWeight="",
+                  smWheelCount="",
                   privs=privs, results=None)
 
 @route('/register', method='POST')
@@ -439,9 +469,13 @@ def register():
   return template('./view/bsfiles/view/proc_rec.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
-                  results=results,
+                  results=results, startdate=request.forms.get('startdate'),
+                  enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
+                  smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
+                  VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
+                  smWheelCount=request.forms.get('smWheelCount'),
                   #details=details,
-                  imgpath=db_man.ftpp)
+                  imgpath='')
 
 @route('/register/<seq>', method='POST')
 def register(seq):
@@ -473,7 +507,11 @@ def regappr():
 
   return template('./view/bsfiles/view/reg_approval.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
-                  user=act_user,
+                  user=act_user, startdate='2015-06-25',
+                  enddate='2015-06-25', ReadFlag="",
+                  smLimitWeightPercent="",
+                  VehicheCard="", smTotalWeight="",
+                  smWheelCount="",
                   privs=privs, results=None)
 
 @route('/reg_approval', method='POST')
@@ -505,7 +543,11 @@ def regappr():
   return template('./view/bsfiles/view/reg_approval.tpl',
                   custom_hdr='./view/bsfiles/view/dashboard_cus_file.tpl',
                   user=act_user, privs=privs,
-                  results=results,
+                  results=results, startdate=request.forms.get('startdate'),
+                  enddate=request.forms.get('enddate'), ReadFlag=request.forms.get('ReadFlag'),
+                  smLimitWeightPercent=request.forms.get('smLimitWeightPercent'),
+                  VehicheCard=request.forms.get('VehicheCard'), smTotalWeight=request.forms.get('smTotalWeight'),
+                  smWheelCount=request.forms.get('smWheelCount'),
                   #details=details,
                   imgpath=db_man.ftpp)
 

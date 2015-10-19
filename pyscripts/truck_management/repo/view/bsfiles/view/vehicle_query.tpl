@@ -16,23 +16,33 @@
 		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">开始时间</label>
 		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="text" class="form-control input-sm" id="startdate" name="startdate" 
-		        	  	placeholder="2015-01-30 15:55:06"/>
+		        	  	value={{startdate}}>
 		        	  </div>
 		          </td>
 		          <td>
 		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">结束时间</label>
 		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<input type="text" class="form-control input-sm" id="enddate" name="enddate" 
-		        	  	placeholder="2015-01-30 15:55:06"/>
+		        	  	value={{enddate}}>
 		        	  </div>
 		          </td>
 	      	  	  <td>
 		      	  	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">超限状态</label>
 		      	  	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="smState">
-	        			<option value="1">超限</option>
-	        			<option value="0">正常</option>
-	        			<option value="" selected>全部</option>
+		        	  	%if smState == "1":
+	        			  <option value="1" selected>超限</option>
+	        			  <option value="0">正常</option>
+	        			  <option value="">全部</option>
+	        			%elif smState == "0":
+	        			  <option value="1">超限</option>
+	        			  <option value="0" selected>正常</option>
+	        			  <option value="">全部</option>
+	        			%else:
+	        			  <option value="1">超限</option>
+	        			  <option value="0">正常</option>
+	        			  <option value="" selected>全部</option>
+	        			%end
 		        	  </select>
 		        	  </div>
 		          </td>
@@ -42,12 +52,49 @@
 		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">处理状态</label>
 		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="ReadFlag">
-		        	  	<opton value="None">未处理</option>
+		        	  	%if ReadFlag == "":
+		        	  	<option value="None">未处理</option>
 	        			<option value="1">已申请处理</option>
 	        			<option value="2">处理申请已审核</option>
 	        			<option value="3">处理已登记</option>
 	        			<option value="4">处理登记已审核</option>
 	        			<option value="" selected>全部</option>
+	        			%elif ReadFlag == "None":
+	        			<option value="None" selected>未处理</option>
+	        			<option value="1">已申请处理</option>
+	        			<option value="2">处理申请已审核</option>
+	        			<option value="3">处理已登记</option>
+	        			<option value="4">处理登记已审核</option>
+	        			<option value="">全部</option>
+	        			%elif ReadFlag == "1":
+	        			<option value="None">未处理</option>
+	        			<option value="1" selected>已申请处理</option>
+	        			<option value="2">处理申请已审核</option>
+	        			<option value="3">处理已登记</option>
+	        			<option value="4">处理登记已审核</option>
+	        			<option value="">全部</option>
+	        			%elif ReadFlag == "2":
+	        			<option value="None">未处理</option>
+	        			<option value="1">已申请处理</option>
+	        			<option value="2" selected>处理申请已审核</option>
+	        			<option value="3">处理已登记</option>
+	        			<option value="4">处理登记已审核</option>
+	        			<option value="">全部</option>
+	        			%elif ReadFlag == "3":
+	        			<option value="None">未处理</option>
+	        			<option value="1">已申请处理</option>
+	        			<option value="2">处理申请已审核</option>
+	        			<option value="3" selected>处理已登记</option>
+	        			<option value="4">处理登记已审核</option>
+	        			<option value="">全部</option>
+	        			%elif ReadFlag == "4":
+	        			<option value="None">未处理</option>
+	        			<option value="1">已申请处理</option>
+	        			<option value="2">处理申请已审核</option>
+	        			<option value="3">处理已登记</option>
+	        			<option value="4" selected>处理登记已审核</option>
+	        			<option value="">全部</option>
+	        			%end
 		        	  </select>
 		        	  </div>
 	        	  </td>
@@ -66,10 +113,21 @@
 		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">车轴数</label>
 		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  <select class="form-control input-sm" name="smWheelCount" id="wheels">
-		        	  	%for i in xrange(2, 7):
-	        			<option value="{{i}}">{{i}}</option>
+		        	  	%if smWheelCount == "":
+			        	  	%for i in xrange(2, 7):
+		        			<option value="{{i}}">{{i}}</option>
+		        			%end
+		        			<option value="" selected>全部</option>
+	        			%else:
+	        				%for i in xrange(2, 7):
+	        				%if str(i) == smWheelCount:
+	        				<option value="{{i}}" selected>{{i}}</option>
+	        				%else:
+		        			<option value="{{i}}">{{i}}</option>
+		        			%end
+		        			%end
+		        			<option value="">全部</option>
 	        			%end
-	        			<option value="" selected>全部</option>
 		        	  </select>
 		        	  </div>
 	        	  </td>
@@ -78,7 +136,7 @@
 	        		<td>
 		        	  <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">车牌号</label>
 		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
-		        	  	<input type="text" class="form-control input-sm" name="VehicheCard"/>
+		        	  	<input type="text" class="form-control input-sm" name="VehicheCard" value={{VehicheCard}}>
 		        	  </div>
 	        	  	</td>
 	        	  	<td>
@@ -86,10 +144,21 @@
 		        	  <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
 		        	  	<!--input type="text" class="form-control input-sm" name="smLimitWeightPercent"/-->
 		        	  	<select class="form-control input-sm" name="smLimitWeightPercent" id="smLimitWeightPercent">
-		        	  	%for i in xrange(10, 110, 10):
-	        			<option value="{{i}}">{{i}}</option>
+		        	  	%if smLimitWeightPercent == "":
+			        	  	%for i in xrange(10, 110, 10):
+		        			<option value="{{i}}">{{i}}</option>
+		        			%end
+		        			<option value="" selected>全部</option>
+	        			%else:
+	        				%for i in xrange(10, 110, 10):
+		        				%if str(i) == smLimitWeightPercent:
+			        			<option value="{{i}}" selected>{{i}}</option>
+			        			%else:
+			        			<option value="{{i}}">{{i}}</option>
+			        			%end
+		        			%end
+		        			<option value="">全部</option>
 	        			%end
-	        			<option value="" selected>全部</option>
 		        	  	</select>
 		        	  </div>
 	        	  	</td>

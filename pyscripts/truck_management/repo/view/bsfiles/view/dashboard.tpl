@@ -16,24 +16,35 @@
                   <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">开始时间</label>
                   <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
                   <input type="text" class="form-control input-sm" id="startdate" name="startdate" 
-                  placeholder="2015-01-30 15:55:06"/>
+                  value={{startdate}}>
                   </div>
                 </td>
                 <td>
                   <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">结束时间</label>
                   <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
                   <input type="text" class="form-control input-sm" id="enddate" name="enddate" 
-                  placeholder="2015-01-30 15:55:06"/>
+                  value={{enddate}}>
                   </div>
                 </td>
                 <td>
                   <label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label">站点</label>
                   <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6">
                   <select class="form-control input-sm" name="SiteID" id="siteid">
-                  %for id in siteids:
-                    <option value={{id}}>{{id}}</option>
+                  %if siteid == "":
+                    %for id in siteids:
+                      <option value={{id}}>{{id}}</option>
+                    %end
+                    <option value="" selected>全部</option>
+                  %else:
+                    %for id in siteids:
+                      %if str(id) == siteid:
+                      <option value={{id}} selected>{{id}}</option>
+                      %else:
+                      <option value={{id}}>{{id}}</option>
+                      %end
+                    %end
+                    <option value="">全部</option>
                   %end
-                  <option value="" selected>全部</option>
                   </select>
                   </div>
                 </td>
