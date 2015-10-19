@@ -26,19 +26,17 @@ body {
   /*margin: 0 auto;*/
   margin-left: 50%;
   margin-top: 20.1%;
-  background-image: url('/static/view/bsfiles/images/bg-si.png');
-  background-position: fixed;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-attachment: fixed;
 }
 
 .form-signin .form-signin-heading { padding-left: 25px; }
 
 .form-signin .form-signin-heading,
 .form-signin .checkbox {
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
+
+.checkbox {margin: 0;}
+
 .form-signin .checkbox .verinfo {
   font-weight: normal;
 }
@@ -55,13 +53,13 @@ body {
   z-index: 2;
 }
 .form-signin input[type="email"] {
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 .form-signin input[type="password"] {
   margin-bottom: 10px;
-  margin-top: 30px;
+  margin-top: 25px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
